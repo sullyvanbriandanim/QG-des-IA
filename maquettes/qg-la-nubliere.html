@@ -55,7 +55,7 @@ button,input,textarea{font:inherit;color:inherit}
 #world{position:absolute;left:0;top:0;transform-origin:0 0}
 #cv{display:block;image-rendering:pixelated;image-rendering:crisp-edges}
 #ov{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.room-lbl{position:absolute;pointer-events:auto;display:flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;border-radius:14px;border:3px solid rgba(255,255,255,.85);color:#fff;font-family:var(--f-label);cursor:pointer;box-shadow:0 3px 0 rgba(43,33,64,.35);transform:translate(-10%,-50%);white-space:nowrap}
+.room-lbl{position:absolute;pointer-events:none;display:flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;border-radius:14px;border:3px solid rgba(255,255,255,.85);color:#fff;font-family:var(--f-label);cursor:pointer;box-shadow:0 3px 0 rgba(43,33,64,.35);transform:translate(-10%,-50%);white-space:nowrap}
 .room-lbl b{display:block;font-weight:900;font-size:15px;line-height:1.1}
 .room-lbl small{display:block;font-weight:700;font-size:11.5px;opacity:.9}
 .room-lbl .ic{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.9);display:grid;place-items:center}
@@ -66,7 +66,7 @@ button,input,textarea{font:inherit;color:inherit}
 .card .nm i{width:7px;height:7px;border-radius:50%}
 .card .tk{font:italic 500 15.5px/1.25 var(--f-task);margin-top:3px}
 .card::after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-bottom:0;border-top-color:var(--card)}
-.badge{position:absolute;transform:translate(-50%,-50%);min-width:22px;height:22px;border-radius:999px;background:var(--bad);color:#fff;font:900 12px var(--f-label);display:grid;place-items:center;border:2px solid #fff;pointer-events:auto;cursor:pointer}
+.badge{position:absolute;transform:translate(-50%,-50%);min-width:22px;height:22px;border-radius:999px;background:var(--bad);color:#fff;font:900 12px var(--f-label);display:grid;place-items:center;border:2px solid #fff;pointer-events:none}
 .zoom{position:absolute;left:max(12px,env(safe-area-inset-left,0px));bottom:12px;display:flex;gap:6px;z-index:3}
 .zoom button{width:42px;height:42px;border-radius:12px;border:2px solid rgba(43,33,64,.25);background:var(--surface);font-size:20px;font-weight:800;cursor:pointer}
 .zoom button.wide{width:auto;padding:0 12px;font-size:13px}
@@ -79,6 +79,7 @@ button,input,textarea{font:inherit;color:inherit}
 /* Panneau */
 .panel{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--surface);border-left:1px solid var(--line);box-shadow:-12px 0 30px rgba(0,0,0,.14);transform:translateX(105%);transition:transform .28s ease;display:flex;flex-direction:column;z-index:20;padding-top:env(safe-area-inset-top,0px);padding-right:env(safe-area-inset-right,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 .panel.open{transform:none}
+.panel{min-height:0;max-height:100%}
 @media (min-width:1180px){
   .app.has-panel .main{grid-template-columns:1fr 440px}
   .app.has-panel .panel{position:relative;transform:none;box-shadow:none;width:auto;padding-top:0;z-index:1;grid-column:2;grid-row:1}
@@ -97,7 +98,8 @@ button,input,textarea{font:inherit;color:inherit}
 .ph h2{font-family:var(--f-label);font-weight:900;font-size:24px;margin:0;line-height:1.1;text-wrap:balance}
 .ph .role{margin:3px 0 0;color:var(--muted);font-size:14px}
 .ph .close{flex:none;width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);cursor:pointer;font-size:18px}
-.pb{flex:1;overflow:auto;padding:4px 16px 24px}
+.pb{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;padding:4px 16px calc(32px + env(safe-area-inset-bottom,0px))}
+.ph{flex:none}
 .sec{padding-top:16px}
 .sec h3{margin:0 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800}
 .sec p{margin:0;line-height:1.5}
@@ -427,7 +429,7 @@ function buildObjs(){
   seat('gaston',9.6,2.6,'#ffd34d');
   add(11.3+.8+4.0+.5, c=>{ box(c,11.3,4.0,0,1.1,1.0,.65,'#f7f5f0'); });
   add(12.8+1.0, c=>plant(c,12.8,1.0));
-  add(10.5+3.0, c=>{ for(let i=0;i<4;i++) box(c,10.45,2.75,.7+i*.05,.42,.3,.045,i%2?'#f3e6c4':'#ffffff'); });
+  add(11.6+4.3+.6, c=>{ for(let i=0;i<4;i++) box(c,11.6,4.3,.65+i*.05,.42,.3,.045,i%2?'#f3e6c4':'#ffffff'); });
   // Pause
   add(14.8+1.5+1.0+.15, c=>box(c,14.8,1.0,0,3.0,.3,.9,'#8f73d2'));
   add(14.8+1.5+1.3+.45+.3, c=>{ box(c,14.8,1.3,0,3.0,.9,.42,'#a98ae6'); box(c,14.8,1.3,.42,.3,.9,.25,'#8f73d2'); box(c,17.5,1.3,.42,.3,.9,.25,'#8f73d2'); });
@@ -471,20 +473,23 @@ function applyView(){ cv.style.width=(CW*view.s)+'px'; cv.style.height=(CH*view.
 function zoomAt(f,cx,cy){ const ns=Math.max(.6,Math.min(6,view.s*f)); const k=ns/view.s; cx=cx??stage.clientWidth/2; cy=cy??stage.clientHeight/2; view.tx=cx-(cx-view.tx)*k; view.ty=cy-(cy-view.ty)*k; view.s=ns; applyView(); }
 document.getElementById('zIn').onclick=()=>zoomAt(1.25); document.getElementById('zOut').onclick=()=>zoomAt(.8); document.getElementById('zFit').onclick=fit;
 const ptrs=new Map(); let drag=null, moved=false, pinch=null;
-stage.addEventListener('pointerdown',e=>{ if(e.target.closest('.zoom,.room-lbl,.badge')) return; stage.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY}); moved=false;
+stage.addEventListener('pointerdown',e=>{ if(e.target.closest('.zoom')) return; stage.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY}); moved=false;
   if(ptrs.size===1) drag={x:e.clientX,y:e.clientY,tx:view.tx,ty:view.ty};
   if(ptrs.size===2){ const [a,b]=[...ptrs.values()]; pinch={d:Math.hypot(a.x-b.x,a.y-b.y),s:view.s}; drag=null; } });
 stage.addEventListener('pointermove',e=>{ if(!ptrs.has(e.pointerId)){ hover(e); return; } ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
   if(pinch&&ptrs.size===2){ const [a,b]=[...ptrs.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y); const r=stage.getBoundingClientRect(); zoomAt((pinch.s*d/pinch.d)/view.s,(a.x+b.x)/2-r.left,(a.y+b.y)/2-r.top); moved=true; return; }
-  if(drag){ const dx=e.clientX-drag.x, dy=e.clientY-drag.y; if(Math.hypot(dx,dy)>6){moved=true;stage.classList.add('dragging');} if(moved){ view.tx=drag.tx+dx; view.ty=drag.ty+dy; applyView(); } } });
+  if(drag){ const dx=e.clientX-drag.x, dy=e.clientY-drag.y; if(Math.hypot(dx,dy)>(e.pointerType==='mouse'?6:14)){moved=true;stage.classList.add('dragging');} if(moved){ view.tx=drag.tx+dx; view.ty=drag.ty+dy; applyView(); } } });
 const up=e=>{ const was=ptrs.has(e.pointerId); ptrs.delete(e.pointerId); if(ptrs.size<2) pinch=null; if(ptrs.size===0){ stage.classList.remove('dragging'); if(was&&!moved&&drag) tap(e); drag=null; } };
 stage.addEventListener('pointerup',up); stage.addEventListener('pointercancel',up);
 stage.addEventListener('wheel',e=>{ e.preventDefault(); const r=stage.getBoundingClientRect(); zoomAt(e.deltaY>0?.9:1.1,e.clientX-r.left,e.clientY-r.top); },{passive:false});
 addEventListener('resize',fit);
 function toWorld(e){ const r=stage.getBoundingClientRect(); return [(e.clientX-r.left-view.tx)/view.s,(e.clientY-r.top-view.ty)/view.s]; }
-function pickAgent(px,py){ let best=null,bk=-1; for(const id in A){ const p=id==='yanis'?walk.pos:POS[id]; if(!p) continue; const s=P(p[0],p[1]); if(px>=s[0]-7&&px<=s[0]+7&&py>=s[1]-21&&py<=s[1]+1){ const k=p[0]+p[1]; if(k>bk){bk=k;best=id;} } } return best; }
+function pickAgent(px,py,touch){ const m=touch?Math.max(4,14/view.s):0; let best=null,bd=1e9; for(const id in A){ const p=id==='yanis'?walk.pos:POS[id]; if(!p) continue; const s=P(p[0],p[1]);
+  if(px>=s[0]-7-m&&px<=s[0]+7+m&&py>=s[1]-22-m&&py<=s[1]+2+m){ const d=Math.hypot(px-s[0],py-(s[1]-10)); if(d<bd){bd=d;best=id;} } } return best; }
 function pickRoom(px,py){ const u=(px-OX)/T, v=(py-OY)/(T/2); const x=(u+v)/2, y=(v-u)/2; for(const k in ROOMS){ const r=ROOMS[k]; if(x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1) return k; } return null; }
-function tap(e){ const [px,py]=toWorld(e); const id=pickAgent(px,py); if(id){ openAgent(id); return; } const r=pickRoom(px,py); if(r) openZone(r); }
+function tap(e){ const [px,py]=toWorld(e); const id=pickAgent(px,py,e.pointerType!=='mouse'); if(id){ openAgent(id); return; }
+  for(const el of ov.querySelectorAll('[data-room]')){ const r=el.getBoundingClientRect(); if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){ openZone(el.dataset.room); return; } }
+  const r=pickRoom(px,py); if(r) openZone(r); }
 let hoverId=null; function hover(e){ if(e.pointerType!=='mouse') return; const [px,py]=toWorld(e); const id=pickAgent(px,py); stage.style.cursor=id||pickRoom(px,py)?'pointer':''; if(id!==hoverId){ hoverId=id; placeOverlay(); } }
 
 /* ================= Calque d'étiquettes ================= */
@@ -501,8 +506,8 @@ function placeOverlay(){
   for(const id in A){ const p=id==='yanis'?walk.pos:POS[id]; if(!p) continue; const a=A[id]; const [x,y]=scr(p[0],p[1]); const top=y-22*view.s-4;
     const col=a.level==='dg'?'var(--c-dir)':(POLES[a.pole]||{}).css||'var(--c-new)';
     if(showCard.has(id)&&a.bubble) h+=`<div class="card" style="left:${x}px;top:${top}px"><div class="nm"><i style="background:${col}"></i>${esc(a.name)}</div><div class="tk">${esc(a.bubble)}</div></div>`;
-    else if(view.s>=1.5) h+=`<div class="chip" style="left:${x}px;top:${top}px"><i style="background:${col}"></i>${esc(a.name)}</div>`; }
-  { const [x,y]=scr(10.66,2.9,1.2); h+=`<span class="badge" data-room="valid" style="left:${x}px;top:${y}px">${VALID.length}</span>`; }
+    else if(view.s>=1.0) h+=`<div class="chip" style="left:${x}px;top:${top}px"><i style="background:${col}"></i>${esc(a.name)}</div>`; }
+  { const [x,y]=scr(11.81,4.45,1.15); h+=`<span class="badge" data-room="valid" style="left:${x}px;top:${y}px">${VALID.length}</span>`; }
   ov.innerHTML=h;
   ov.querySelectorAll('[data-room]').forEach(b=>b.onclick=ev=>{ev.stopPropagation(); openZone(b.dataset.room);});
 }
