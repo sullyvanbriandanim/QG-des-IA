@@ -350,11 +350,14 @@ const SPR=[
 ".oppo..oppo.",
 ".oppo..oppo.",
 ".oooo..oooo."];
+const BACK=["...oooooo...","..ohhhhhho..",".ohhhhhhhho.",".ohhhhhhhho.",".ohhhhhhhho.",".ohhhhhhhho.",".ohhhhhhhho.","..ohhhhhho..","..oobbbboo..",".obbbbbbbbo.","obbbbbbbbbbo","obbbbbbbbbbo","osbbbbbbbbso",".obbbbbbbbo.",".oppppppppo.",".opppoopppo.",".oppo..oppo.",".oppo..oppo.",".oooo..oooo."];
 const WALK=[[".oppo..oppo.",".oppo...ooo.",".oooo......."],[".oppo..oppo.",".ooo...oppo.",".......oooo."]];
-function sprite(a,frame){
-  const rows=SPR.map(r=>r.split(''));
+function sprite(a,frame,back){
+  const rows=(back?BACK:SPR).map(r=>r.split(''));
+  if(back&&!a.long){ rows[7]='..osssssso..'.split(''); }
   if(frame!=null){ for(let i=0;i<3;i++) rows[16+i]=WALK[frame][i].split(''); }
   if(a.long){ for(let r=4;r<10;r++){ if(rows[r][1]!=='.')rows[r][1]='h'; if(rows[r][10]!=='.')rows[r][10]='h'; } rows[9][0]='o'; rows[9][11]='o'; }
+  if(back){ const body=BODY[a.pole]||'#888'; return {rows,pal:{o:OL,h:HAIR[a.hair%6],s:SKIN[a.skin%6],b:body,p:'#3b3f5c'}}; }
   if(a.level==='dg'){ rows[8][5]='w';rows[8][6]='w'; for(let r=9;r<13;r++){rows[r][5]='r';rows[r][6]='r';} }
   if(a.level==='resp'){ rows[10][3]='y'; rows[10][4]='y'; rows[11][3]='y'; rows[11][4]='y'; }
   if(a.level==='ref'){ rows[10][5]='w'; rows[10][6]='w'; rows[11][5]='w'; rows[11][6]='w'; }
@@ -362,8 +365,8 @@ function sprite(a,frame){
   const pal={o:OL,h:HAIR[a.hair%6],s:SKIN[a.skin%6],k:'#1b1530',m:'#b24a3a',b:body,p:'#3b3f5c',w:'#ffffff',r:'#d23c3c',y:'#ffd34d'};
   return {rows,pal};
 }
-function drawChar(c,a,x,y,frame,bob){
-  const p=P(x,y); const {rows,pal}=sprite(a,frame);
+function drawChar(c,a,x,y,frame,bob,back){
+  const p=P(x,y); const {rows,pal}=sprite(a,frame,back);
   c.fillStyle='rgba(43,33,64,.25)'; c.fillRect(Math.round(p[0])-5,Math.round(p[1])-1,10,2);
   const ox=Math.round(p[0])-6, oy=Math.round(p[1])-19-(bob?1:0);
   for(let r=0;r<rows.length;r++)for(let k=0;k<12;k++){const ch=rows[r][k]; if(ch==='.')continue; c.fillStyle=pal[ch]; c.fillRect(ox+k,oy+r,1,1);}
@@ -375,7 +378,7 @@ function buildBG(){
   g.clearRect(0,0,CW,CH);
   // dalle du bâtiment
   box(g,0,0,-.35,24,20,.35,'#f2e4c4',{front:'#d9c49b',right:'#c4ad83'});
-  for(let x=0;x<24;x++)for(let y=0;y<20;y++) if((x+y)%2) topFace(g,x,y,0,1,1,'#ecdab3');
+  for(let x=0;x<24;x++)for(let y=0;y<20;y++) if((x+y)%2) topFace(g,x,y,0,1,1,'#efe0bf');
   // murs du fond
   box(g,-.35,-.35,0,24.35,.35,2.6,'#f6ecd6',{front:'#f6ecd6',top:'#fff7e6'});
   box(g,-.35,0,0,.35,20,2.6,'#f6ecd6',{right:'#e9dcc0',top:'#fff7e6'});
@@ -385,7 +388,7 @@ function buildBG(){
   [[8.6,10.4],[14.6,16.4],[2.4,4]].forEach(w=>winX(...w));
   // sols des pièces
   for(const k in ROOMS){ const r=ROOMS[k]; topFace(g,r.x0,r.y0,0,r.x1-r.x0,r.y1-r.y0,r.floor);
-    for(let x=Math.ceil(r.x0);x<r.x1-.5;x++)for(let y=Math.ceil(r.y0);y<r.y1-.5;y++) if((x+y)%2) topFace(g,x,y,0,Math.min(1,r.x1-x),Math.min(1,r.y1-y),shade(r.floor,.95)); }
+    }
   // tapis
   topFace(g,1.6,2.2,0,3.6,2.6,'#e8b93a'); topFace(g,1.8,2.4,0,3.2,2.2,'#f4cf5c');
   topFace(g,15.2,2.6,0,3.4,2.2,'#b79be6');
@@ -394,14 +397,23 @@ function buildBG(){
 let OBJ=[]; const add=(k,fn)=>OBJ.push({k,fn});
 const DOOR=(r)=>[r.x0+.7,r.x0+1.9];
 function walls(r){
-  const t=.24,h=.62,col=r.wall;
+  const t=.3,h=.95,col=r.wall;
   for(let x=r.x0;x<r.x1-1e-6;x+=1){const w=Math.min(1,r.x1-x); add(x+w/2+r.y0, c=>box(c,x,r.y0,0,w,t,h,col,{top:shade(col,1.35)})); }
   for(let y=r.y0+t;y<r.y1-1e-6;y+=1){const d=Math.min(1,r.y1-y); add(r.x0+y+d/2, c=>box(c,r.x0,y,0,t,d,h,col,{top:shade(col,1.35)})); }
   for(let y=r.y0+t;y<r.y1-t-1e-6;y+=1){const d=Math.min(1,r.y1-t-y); add(r.x1+y+d/2-.01, c=>box(c,r.x1-t,y,0,t,d,h,col,{top:shade(col,1.35)})); }
   const [da,db]=DOOR(r);
   for(let x=r.x0;x<r.x1-1e-6;x+=.5){const w=Math.min(.5,r.x1-x); if(x+w>da&&x<db) continue; add(x+w/2+r.y1, c=>box(c,x,r.y1-t,0,w,t,h,col,{top:shade(col,1.35)})); }
 }
-const POS={};
+const POS={}, BACKS=new Set();
+function iDesk(c,x,y,front,mug){ box(c,x,y,0,1.4,.7,.7,'#f7f5f0'); if(front) box(c,x+.45,y+.42,.7,.5,.08,.45,'#3d3557',{front:'#a8dcff'}); else box(c,x+.45,y+.18,.7,.5,.08,.45,'#3d3557'); box(c,x+.15,y+.2,.7,.12,.12,.14,mug); }
+function chairBack(c,x,y){ box(c,x-.22,y-.15,.3,.44,.44,.08,'#4b4f63'); box(c,x-.22,y+.25,.3,.44,.08,.55,'#4b4f63'); }
+function island(r,ids,mug,div){ const x=r.x0+1.5, yb=r.y0+1.9, yf=yb+.7;
+  const slots=[[x,yb,0],[x+1.4,yb,0],[x,yf,1],[x+1.4,yf,1]];
+  slots.forEach(([dx,dy,f],i)=>{ const id=ids[i]; add(dx+.7+dy+.35, c=>iDesk(c,dx,dy,f,mug));
+    if(!f){ const cx=dx+.7, cy=dy-.32; if(id){POS[id]=[cx,cy]; BACKS.delete(id);} add(cx+cy-.05, c=>{ if(id&&A[id]&&A[id].at==='desk') return; chair(c,cx,cy); }); }
+    else { const cx=dx+.7, cy=dy+1.05; if(id){POS[id]=[cx,cy]; BACKS.add(id);} add(cx+cy+.3, c=>chairBack(c,cx,cy)); } });
+  add(x+1.4+yb+.7+.01, c=>box(c,x,yb+.67,.7,2.8,.06,.32,div,{top:shade(div,1.3)}));
+}
 function seat(id,dx,dy,mug){ add(dx+.75+dy+.4, c=>desk(c,dx,dy,mug)); const cx=dx+.85, cy=dy-.3; POS[id]=[cx,cy]; add(cx+cy-.05, c=>{ if(A[id]&&A[id].at==='desk') return; chair(c,cx,cy); }); }
 function buildObjs(){
   OBJ=[]; for(const k in ROOMS) walls(ROOMS[k]);
@@ -422,32 +434,33 @@ function buildObjs(){
   add(15.7+.6+3.2+.3, c=>{ box(c,15.7,3.2,0,1.3,.6,.32,'#a8703e'); box(c,16.0,3.35,.32,.15,.15,.14,'#ffffff'); });
   add(19.3+1.3+.5+.3, c=>{ box(c,19.3,.5,0,2.6,.6,.92,'#efe5d4'); box(c,19.6,.6,.92,.55,.4,.55,'#3d3557'); box(c,20.6,.6,.92,.18,.18,.16,'#ef8a4c'); });
   add(19.0+.8+3.4+.45, c=>{ box(c,19.0,3.4,0,1.6,.9,.72,'#2f9e5b',{top:'#38b76a'}); paintY(c,4.3,19.0,20.6,.7,.72,'#ffffff'); const a=P(19.8,3.4,.73),b=P(19.8,4.3,.73); c.fillStyle='#ffffff'; for(let t=0;t<=1;t+=.05) c.fillRect(Math.round(a[0]+(b[0]-a[0])*t),Math.round(a[1]+(b[1]-a[1])*t),1,1); });
+  [20.95,22.2].forEach(bx=>add(bx+.55+2.3+.5, c=>{ box(c,bx,2.3,0,1.05,1.0,1.55,'#eef6fb',{front:'#dcedf7',right:'#c9e2f1'}); paintY(c,3.3,bx+.15,bx+.9,.05,1.4,'#f7fbfe'); box(c,bx-.05,2.25,1.55,1.15,1.1,.14,'#8f73d2'); box(c,bx+.45,3.0,.0,.3,.25,.45,'#a98ae6'); }));
   add(22.6+5.0+.2, c=>{ box(c,22.2,4.8,0,.75,.45,.45,'#4f7fe0',{top:'#ffffff'}); });
   add(17.4+5.2, c=>{ const p=P(17.4,5.2,.25); blob(c,p[0],p[1]-6,["..oooo..",".oyyrro.","oyyyrrro","owwwbbbo","owwwbbbo",".owwbbo.","..oooo.."],{o:OL,y:'#ffd34d',r:'#ef5350',w:'#ffffff',b:'#4f7fe0'}); });
   add(23.0+1.0, c=>{ box(c,22.7,.7,0,.6,.6,.4,'#c8693b'); const b=P(23,1,.4); c.fillStyle='#8a5a2b'; for(let i=0;i<26;i++) c.fillRect(Math.round(b[0]+i*.15),Math.round(b[1])-i,2,1); const t=[b[0]+4,b[1]-26]; blob(c,t[0],t[1]-6,["..gg....gg..",".gGGg..gGGg.","gGggGggGggGg","g...gGGg...g","....gggg...."],{g:'#2e7d32',G:'#66bb6a'}); });
   // pôles
-  const isl=(k,mug)=>{ const r=ROOMS[k],p=POLES[k],x0=r.x0,y0=r.y0; const ord=[p.agents[0],p.resp,p.agents[1]];
-    seat(ord[0],x0+1.1,y0+3.5,mug); seat(ord[1],x0+3.2,y0+2.35,mug); seat(ord[2],x0+5.3,y0+1.2,mug);
-    add(x0+1.2+y0+.6, c=>whiteboard(c,x0+.6,y0+.45));
+  const isl=(k,mug)=>{ const r=ROOMS[k],p=POLES[k],x0=r.x0,y0=r.y0;
+    island(r,[p.resp,p.agents[1],p.agents[0],null],mug,shade(r.wall,1.25));
+    add(x0+5.6+y0+.6, c=>whiteboard(c,x0+5.1,y0+.5));
     add(x0+6.6+y0+4.4, c=>plant(c,x0+6.65,y0+4.55)); add(x0+6.6+y0+.8, c=>plant(c,x0+6.6,y0+.8,1)); };
   isl('anim','#ffd34d'); isl('plan','#ef8a4c'); isl('com','#e05a98'); isl('cm','#4f7fe0');
-  { const r=ROOMS.suivi; POLES.suivi.refs.forEach((id,i)=>seat(id,r.x0+.7+i*1.55,r.y0+3.75-i*1.0,'#e05a98')); add(r.x0+6.6+r.y0+4.4, c=>plant(c,r.x0+6.65,r.y0+4.55)); }
+  { const r=ROOMS.suivi; island(r,POLES.suivi.refs,'#e05a98',shade(r.wall,1.25)); add(r.x0+5.6+r.y0+.6, c=>whiteboard(c,r.x0+5.1,r.y0+.5)); add(r.x0+6.6+r.y0+4.4, c=>plant(c,r.x0+6.65,r.y0+4.55)); add(r.x0+.8+r.y0+.8, c=>plant(c,r.x0+.8,r.y0+.8)); }
   { const r=ROOMS.free; const hired=Object.values(A).filter(a=>a.pole==='new');
-    [[r.x0+1.4,r.y0+3.2],[r.x0+4.2,r.y0+1.6]].forEach(([dx,dy],i)=>{ const id=hired[i]?hired[i].id:'__free'+i; seat(id,dx,dy,'#8a5cd0'); });
-    add(r.x0+1.2+r.y0+.6, c=>whiteboard(c,r.x0+.6,r.y0+.45)); add(r.x0+6.6+r.y0+4.4, c=>plant(c,r.x0+6.65,r.y0+4.55)); }
+    island(r,[hired[0]&&hired[0].id,hired[1]&&hired[1].id,null,null],'#8a5cd0',shade(r.wall,1.25));
+    add(r.x0+5.6+r.y0+.6, c=>whiteboard(c,r.x0+5.1,r.y0+.5)); add(r.x0+6.6+r.y0+4.4, c=>plant(c,r.x0+6.65,r.y0+4.55)); }
   add(16.0+13.1, c=>plant(c,16.0,13.1)); add(8.0+13.1, c=>plant(c,8.0,13.1)); add(23.8+6.7, c=>plant(c,23.6,6.7));
   POS.maya=[16.0,1.85]; POS.basile=[20.4,1.6]; POS.jojo=[19.8,3.15];
-  for(const id in A){ if(id==='yanis'||!POS[id]) continue; const a=A[id]; add(POS[id][0]+POS[id][1]+.001, c=>{ const [x,y]=POS[id]; drawChar(c,a,x,y,null,a.at==='desk'&&bobOn&&(Math.floor(tNow/600+a.skin)%2===0)); }); }
+  for(const id in A){ if(id==='yanis'||!POS[id]) continue; const a=A[id]; add(POS[id][0]+POS[id][1]+.001, c=>{ const [x,y]=POS[id]; drawChar(c,a,x,y,null,a.at==='desk'&&bobOn&&(Math.floor(tNow/600+a.skin)%2===0),a.at==='desk'&&BACKS.has(id)); }); }
   add(0, c=>{}); // yanis inséré dynamiquement
   OBJ.sort((a,b)=>a.k-b.k);
 }
 let tNow=0, bobOn=!matchMedia('(prefers-reduced-motion: reduce)').matches;
-const walk={pos:[17.25,10.6],frame:null};
+const walk={pos:[18.7,11.05],frame:null,back:true};
 function render(){
   ctx.clearRect(0,0,CW,CH); ctx.drawImage(bg,0,0);
   const yk=walk.pos[0]+walk.pos[1]; let done=false;
-  for(const o of OBJ){ if(!done&&o.k>yk){ drawChar(ctx,A.yanis,walk.pos[0],walk.pos[1],walk.frame,false); done=true; } o.fn(ctx); }
-  if(!done) drawChar(ctx,A.yanis,walk.pos[0],walk.pos[1],walk.frame,false);
+  for(const o of OBJ){ if(!done&&o.k>yk){ drawChar(ctx,A.yanis,walk.pos[0],walk.pos[1],walk.frame,false,walk.back); done=true; } o.fn(ctx); }
+  if(!done) drawChar(ctx,A.yanis,walk.pos[0],walk.pos[1],walk.frame,false,walk.back);
 }
 
 /* ================= Vue : zoom, déplacement, toucher ================= */
@@ -497,13 +510,14 @@ function setBubble(id,b){ A[id].bubble=b; placeOverlay(); }
 
 /* ================= Animation de Yanis ================= */
 const ROUTE=[
- {to:[17.25,10.6],wait:5,b:'écrit le mail de bienvenue'},
- {to:[19.6,10.75],wait:3.4,b:'apporte son mail à Margaux',arr(){ setBubble('margaux','relit le mail de Yanis'); setTimeout(()=>setBubble('margaux','c\'est bon pour moi !'),1700);} },
- {to:[19.6,12.1],b:'file chez Gaston',leave(){ setTimeout(()=>setBubble('margaux',''),1500);} },
- {to:[17.6,12.1]},{to:[17.6,13.1]},{to:[16.0,13.1]},{to:[16.0,6.7]},{to:[8.2,6.7]},{to:[8.2,5.6]},
+ {to:[18.7,11.05],wait:5,b:'écrit le mail de bienvenue'},
+ {to:[17.6,11.05],b:'apporte son mail à Margaux'},{to:[17.6,9.0]},
+ {to:[18.15,9.0],wait:3.4,arr(){ setBubble('margaux','relit le mail de Yanis'); setTimeout(()=>setBubble('margaux','c\'est bon pour moi !'),1700);} },
+ {to:[17.6,9.0],b:'file chez Gaston',leave(){ setTimeout(()=>setBubble('margaux',''),1500);} },
+ {to:[17.6,13.1]},{to:[16.0,13.1]},{to:[16.0,6.7]},{to:[8.2,6.7]},{to:[8.2,5.6]},
  {to:[10.3,4.3],wait:3.4,b:'dépose le mail vérifié',arr(){ setBubble('gaston','valide : direction le président'); bump(); }},
  {to:[8.2,5.6],b:'retourne à son bureau',leave(){ setTimeout(()=>setBubble('gaston','répartit les infos de Tempoo'),1800);} },
- {to:[8.2,6.7]},{to:[16.0,6.7]},{to:[16.0,13.1]},{to:[17.6,13.1]},{to:[17.6,12.1]},{to:[17.25,11.9]},{to:[17.25,10.6]}
+ {to:[8.2,6.7]},{to:[16.0,6.7]},{to:[16.0,13.1]},{to:[17.6,13.1]},{to:[17.6,11.05]},{to:[18.7,11.05]}
 ];
 let step=0, waitLeft=3, last=0, acc=0;
 A.yanis.bubble=ROUTE[0].b;
@@ -513,8 +527,8 @@ function tick(t){
   if(bobOn){
     if(waitLeft>0){ waitLeft-=dt; walk.frame=null; if(waitLeft<=0){ const c=ROUTE[step]; c.leave&&c.leave(); step=(step+1)%ROUTE.length; if(ROUTE[step].b) setBubble('yanis',ROUTE[step].b); } }
     else { const tg=ROUTE[step].to,[x,y]=walk.pos,dx=tg[0]-x,dy=tg[1]-y,d=Math.hypot(dx,dy),sp=2.3*dt;
-      if(d<=sp){ walk.pos=[tg[0],tg[1]]; const c=ROUTE[step]; if(c.b) setBubble('yanis',c.b); c.arr&&c.arr(); waitLeft=c.wait||.0001; walk.frame=null; }
-      else { walk.pos=[x+dx/d*sp,y+dy/d*sp]; walk.frame=Math.floor(t/160)%2; } }
+      if(d<=sp){ walk.pos=[tg[0],tg[1]]; walk.back=(step===0); const c=ROUTE[step]; if(c.b) setBubble('yanis',c.b); c.arr&&c.arr(); waitLeft=c.wait||.0001; walk.frame=null; }
+      else { walk.pos=[x+dx/d*sp,y+dy/d*sp]; walk.back=(dx+dy)<-.001; walk.frame=Math.floor(t/160)%2; } }
   }
   acc+=dt; if(acc>1/14){ acc=0; render(); if(walk.frame!=null||waitLeft>0) placeYanisLabel(); }
   requestAnimationFrame(tick);
