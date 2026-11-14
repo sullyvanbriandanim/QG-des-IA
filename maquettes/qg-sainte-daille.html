@@ -1,0 +1,778 @@
+<title>QG Sainte-Daille</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout : open space isométrique plein écran (tablette d'abord) + fiche qui s'ouvre à droite (feuille du bas sur téléphone). */
+:root{
+  --bg:#edf2ee; --surface:#ffffff; --surface-2:#f3f7f4; --fg:#1b2924; --muted:#5a6c65; --line:#d3ddd8;
+  --accent:#1f7a5c; --accent-fg:#ffffff; --gold:#c98f12;
+  --ok:#2a8f55; --warn:#c27c06; --bad:#c2453a; --info:#3a6fd0;
+  --c-dir:#2d3f6b; --c-anim:#e5703a; --c-plan:#17918b; --c-com:#3a70d4; --c-cm:#cf4b87; --c-suivi:#66944a; --c-free:#93a29c; --c-new:#8a5cd0;
+  --sky:#bfe2f1; --wall:#f4ede1; --wall-side:#e7dccb; --wall-top:#cbbda5;
+  --floor-pres:#e6cd9f; --floor-dg:#dcd4c4; --floor-open:#e3e8e3; --floor-pause:#cde6d6;
+  --desk:#f8f4eb; --desk-pres:#a8703e; --shelf:#b98250; --monitor:#2a323f; --screen:#8fd6ff;
+  --chair:#55606d; --plant:#3c9a59; --plant-2:#2e7d46; --pot:#c4693c; --sofa:#ef8a5b; --counter:#e9e1d2;
+  --glass:#a6d6ea; --bubble:#ffffff; --bubble-fg:#1b2924; --tag:#ffffff;
+  --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#111a17; --surface:#18231f; --surface-2:#1f2b27; --fg:#e6eee9; --muted:#9bb0a7; --line:#2b3a35;
+  --accent:#4cc08f; --accent-fg:#0d1a15; --gold:#f0b73a;
+  --ok:#57c784; --warn:#e8a93a; --bad:#ef7468; --info:#78a3f0;
+  --c-dir:#7f95d1; --c-anim:#f08b57; --c-plan:#3fb8b1; --c-com:#6c98ec; --c-cm:#e47aa9; --c-suivi:#8ebb70; --c-free:#7b8a85; --c-new:#a988e0;
+  --sky:#2b4170; --wall:#3a3f46; --wall-side:#32373e; --wall-top:#272b31;
+  --floor-pres:#5b4a33; --floor-dg:#47433c; --floor-open:#353e3b; --floor-pause:#2c4638;
+  --desk:#5e636b; --desk-pres:#6e4826; --shelf:#7a5333; --monitor:#13171d; --screen:#6fe2ff;
+  --chair:#2c333b; --plant:#2f7d48; --plant-2:#246338; --pot:#8d4b2c; --sofa:#b65f3c; --counter:#4b4f55;
+  --glass:#6aa5bf; --bubble:#24312c; --bubble-fg:#e6eee9; --tag:#24312c; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#111a17; --surface:#18231f; --surface-2:#1f2b27; --fg:#e6eee9; --muted:#9bb0a7; --line:#2b3a35;
+  --accent:#4cc08f; --accent-fg:#0d1a15; --gold:#f0b73a;
+  --ok:#57c784; --warn:#e8a93a; --bad:#ef7468; --info:#78a3f0;
+  --c-dir:#7f95d1; --c-anim:#f08b57; --c-plan:#3fb8b1; --c-com:#6c98ec; --c-cm:#e47aa9; --c-suivi:#8ebb70; --c-free:#7b8a85; --c-new:#a988e0;
+  --sky:#2b4170; --wall:#3a3f46; --wall-side:#32373e; --wall-top:#272b31;
+  --floor-pres:#5b4a33; --floor-dg:#47433c; --floor-open:#353e3b; --floor-pause:#2c4638;
+  --desk:#5e636b; --desk-pres:#6e4826; --shelf:#7a5333; --monitor:#13171d; --screen:#6fe2ff;
+  --chair:#2c333b; --plant:#2f7d48; --plant-2:#246338; --pot:#8d4b2c; --sofa:#b65f3c; --counter:#4b4f55;
+  --glass:#6aa5bf; --bubble:#24312c; --bubble-fg:#e6eee9; --tag:#24312c; color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;overflow:hidden}
+*{box-sizing:border-box}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.app{height:100%;display:grid;grid-template-columns:1fr;grid-template-rows:auto 1fr auto}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line);background:var(--surface)}
+.brand{display:flex;flex-direction:column;gap:1px;margin-right:auto;min-width:0}
+.brand h1{font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:-.01em;margin:0;line-height:1.1}
+.brand p{margin:0;color:var(--muted);font-size:13px}
+.mock{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--surface-2);border:1px dashed var(--line);color:var(--muted);vertical-align:middle;margin-left:6px}
+.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:7px 12px;font-weight:600;font-size:14px;white-space:nowrap}
+button.pill{cursor:pointer}
+button.pill:hover{border-color:var(--accent)}
+.pill .n{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:var(--bad);color:#fff;font-size:12px;font-variant-numeric:tabular-nums}
+.pill .n.new{background:var(--c-new)}
+.pill.count{background:transparent;color:var(--muted);font-weight:500}
+.pill.count b{color:var(--fg);font-variant-numeric:tabular-nums}
+.pulse{animation:pulse 1.2s ease 2}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08);border-color:var(--bad)}}
+
+.main{position:relative;min-height:0;display:grid;grid-template-columns:1fr}
+.stage{position:relative;min-width:0;min-height:0;overflow:hidden}
+#scene{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+.zoom{position:absolute;left:max(12px,env(safe-area-inset-left,0px));bottom:12px;display:flex;gap:6px}
+.zoom button{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-size:20px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.zoom button.wide{width:auto;padding:0 12px;font-size:13px}
+.hint{position:absolute;right:max(12px,env(safe-area-inset-right,0px));bottom:12px;font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--line);padding:6px 10px;border-radius:10px;max-width:260px}
+
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-block:9px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-top:1px solid var(--line);background:var(--surface);font-size:13px}
+.flow .lbl{font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-size:11px;margin-right:4px}
+.step{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line)}
+.step i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.arrow{color:var(--muted)}
+
+/* Panneau */
+.panel{position:fixed;top:0;right:0;bottom:0;width:min(430px,100%);background:var(--surface);border-left:1px solid var(--line);box-shadow:-12px 0 30px rgba(0,0,0,.12);transform:translateX(105%);transition:transform .28s ease;display:flex;flex-direction:column;z-index:20;padding-top:env(safe-area-inset-top,0px);padding-right:env(safe-area-inset-right,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.panel.open{transform:none}
+@media (min-width:1180px){
+  .app.has-panel .main{grid-template-columns:1fr 430px}
+  .app.has-panel .panel{position:relative;transform:none;box-shadow:none;width:auto;padding-top:0;z-index:1}
+  .panel:not(.open){display:none}
+  .app.has-panel .panel{grid-column:2;grid-row:1}
+}
+@media (max-width:640px){
+  .panel{top:auto;left:0;width:100%;height:80%;border-left:0;border-top:1px solid var(--line);border-radius:20px 20px 0 0;transform:translateY(105%);padding-left:env(safe-area-inset-left,0px)}
+  .panel.open{transform:none}
+  .hint{display:none}
+  .brand h1{font-size:19px}
+  .top .pill.count{display:none}
+}
+.ph{display:flex;align-items:flex-start;gap:12px;padding:16px 16px 12px;border-bottom:1px solid var(--line)}
+.ph .av{flex:none;width:58px;height:58px;border-radius:16px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line)}
+.ph .who{flex:1;min-width:0}
+.ph h2{font-family:var(--f-display);font-weight:800;font-size:24px;margin:0;line-height:1.1;text-wrap:balance}
+.ph .role{margin:3px 0 0;color:var(--muted);font-size:14px}
+.ph .close{flex:none;width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);cursor:pointer;font-size:18px}
+.pb{flex:1;overflow:auto;padding:4px 16px 24px;-webkit-overflow-scrolling:touch}
+.sec{padding-top:16px}
+.sec h3{margin:0 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.sec p{margin:0;line-height:1.5}
+.tagrow{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-size:13px;font-weight:600;background:var(--surface-2);border:1px solid var(--line)}
+.chip.off{opacity:.55;font-weight:500;text-decoration:line-through;text-decoration-color:var(--muted)}
+.chip i{width:8px;height:8px;border-radius:50%}
+.poletag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;color:#fff;margin-top:6px}
+ul.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+ul.list li{display:flex;gap:8px;align-items:flex-start;line-height:1.4}
+ul.list li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:8px}
+.task{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.task + .task{margin-top:6px}
+.task span{min-width:0}
+.st{flex:none;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap;border:1px solid currentColor}
+.st.en-cours{color:var(--info)} .st.chez-resp{color:var(--c-plan)} .st.chez-dg{color:var(--c-dir)} .st.ton-ok{color:var(--warn)} .st.valide{color:var(--ok)} .st.refuse{color:var(--bad)} .st.attente{color:var(--muted)}
+.chain{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:14px}
+.chain button{border:0;background:none;padding:0;cursor:pointer;font-weight:700;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.note{font-size:13px;color:var(--muted);background:var(--surface-2);border:1px dashed var(--line);padding:8px 10px;border-radius:10px;margin-top:8px;line-height:1.45}
+.talk{display:flex;flex-direction:column;gap:8px}
+.talk textarea{width:100%;min-height:84px;resize:vertical;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface-2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:12px;padding:10px 14px;font-weight:700;border:1px solid var(--line);background:var(--surface-2);cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:transparent}
+.btn.ok{background:var(--ok);color:#fff;border-color:transparent}
+.btn.bad{color:var(--bad)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.msgs{display:flex;flex-direction:column;gap:6px}
+.msg{padding:8px 11px;border-radius:12px;max-width:90%;line-height:1.4;font-size:14px}
+.msg.me{align-self:flex-end;background:var(--accent);color:var(--accent-fg)}
+.msg.them{align-self:flex-start;background:var(--surface-2);border:1px solid var(--line)}
+.gauge{display:grid;grid-template-columns:110px 1fr 40px;gap:10px;align-items:center;font-size:13.5px}
+.gauge + .gauge{margin-top:8px}
+.bar{height:10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.bar b{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .5s}
+.gauge .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.card{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--surface-2)}
+.card + .card{margin-top:10px}
+.card h4{margin:0 0 4px;font-size:15.5px}
+.card .meta{font-size:12.5px;color:var(--muted);margin-bottom:8px}
+.card blockquote{margin:0 0 10px;padding:8px 10px;border-left:3px solid var(--line);background:var(--surface);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.45}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:600;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);border-color:transparent}
+.carnet li{font-size:14px}
+.carnet li.learned::before{background:var(--gold)}
+.ex{font-size:11px;font-weight:700;color:var(--muted);border:1px dashed var(--line);border-radius:6px;padding:1px 5px;margin-left:4px;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:calc(64px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;transition:.25s;z-index:40;max-width:min(520px,calc(100% - 32px));text-align:center;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.opt{display:flex;flex-direction:column;gap:6px}
+.opt .btn{justify-content:flex-start;text-align:left}
+
+/* Scène SVG */
+.bx polygon{stroke:rgba(0,0,0,.16);stroke-width:.6;stroke-linejoin:round}
+.agent{cursor:pointer}
+.agent:focus-visible{outline:none}
+.agent:focus-visible .body{stroke:var(--accent);stroke-width:3}
+.agent:hover .body{filter:brightness(1.08)}
+.bob{animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
+.walking .leg1{animation:leg 0.5s ease-in-out infinite alternate}
+.walking .leg2{animation:leg 0.5s ease-in-out infinite alternate-reverse}
+.leg1,.leg2{transform-box:fill-box;transform-origin:50% 0}
+@keyframes leg{from{transform:rotate(-16deg)}to{transform:rotate(16deg)}}
+.lbl{pointer-events:none}
+.lbl .name{font:700 11px var(--f-body);fill:var(--fg)}
+.lbl .namebg{fill:var(--tag);stroke:var(--line)}
+.lbl .btxt{font:600 11px var(--f-body);fill:var(--bubble-fg)}
+.lbl .bbg{fill:var(--bubble);stroke:var(--line)}
+.zone{cursor:pointer}
+.zone text{font:800 12.5px var(--f-display);fill:#fff;letter-spacing:.02em}
+.zone:hover rect{filter:brightness(1.08)}
+.walltxt{font:800 15px var(--f-display);letter-spacing:.12em;fill:var(--wall-top)}
+.glass{pointer-events:none}
+.hot{cursor:pointer}
+.hot .ring{fill:none;stroke:var(--gold);stroke-width:2.5;stroke-dasharray:6 5;animation:dash 1.6s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-22}}
+.badge circle{fill:var(--bad)} .badge text{font:800 12px var(--f-body);fill:#fff}
+@media (prefers-reduced-motion:reduce){.bob,.walking .leg1,.walking .leg2,.hot .ring,.pulse{animation:none}.panel{transition:none}}
+</style>
+
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand">
+      <h1>QG Sainte-Daille <span class="mock">Maquette</span></h1>
+      <p>Camping Sainte-Daille · La Nublière · Pôle animation</p>
+    </div>
+    <span class="pill count" title="Ouverture prévue mi-mars 2027">Prépa saison · <b id="countdown">J-121</b></span>
+    <button class="pill" id="btnPres" type="button">Ton bureau</button>
+    <button class="pill" id="btnValid" type="button">À valider <span class="n" id="nValid">4</span></button>
+    <button class="pill" id="btnRecrut" type="button">Recrutement <span class="n new" id="nRecrut">1</span></button>
+  </header>
+
+  <div class="main">
+    <div class="stage" id="stage">
+      <svg id="scene" role="img" aria-label="Open space isométrique du QG : bureau du président, bureau du directeur général, salle de pause et pôles d'agents"></svg>
+      <div class="zoom">
+        <button type="button" id="zIn" aria-label="Zoomer">+</button>
+        <button type="button" id="zOut" aria-label="Dézoomer">−</button>
+        <button type="button" id="zFit" class="wide">Tout voir</button>
+      </div>
+      <div class="hint">Touche un agent, un panneau de pôle ou ton bureau. Fais glisser pour te déplacer.</div>
+    </div>
+    <aside class="panel" id="panel" aria-live="polite">
+      <div class="ph" id="ph"></div>
+      <div class="pb" id="pb"></div>
+    </aside>
+  </div>
+
+  <footer class="flow" aria-label="Circuit de validation">
+    <span class="lbl">Circuit</span>
+    <span class="step"><i style="background:var(--info)"></i>Agent fait</span><span class="arrow">→</span>
+    <span class="step"><i style="background:var(--c-plan)"></i>Responsable vérifie</span><span class="arrow">→</span>
+    <span class="step"><i style="background:var(--c-dir)"></i>DG valide ou renvoie</span><span class="arrow">→</span>
+    <span class="step"><i style="background:var(--gold)"></i>Toi : OK président</span>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+/* ---------- Données (exemples de maquette) ---------- */
+const ALL_CONN = ['Gmail','Google Calendar','Google Docs','Google Drive','Google Sheets','Google Slides','Canva','DeepL','ElevenLabs','Higgsfield','Spotify','Trello','Unsplash','Speko'];
+const POLES = {
+  dir:  {name:'Direction', color:'var(--c-dir)'},
+  anim: {name:'Animation & Activités', short:'ANIMATION', color:'var(--c-anim)', x0:0.8, y0:7,
+         mission:"Inventer et organiser les activités : journée, soirée, club enfants, grands jeux, plan B pluie, matériel.",
+         conn:['Google Docs','Google Drive','Spotify','Unsplash'], resp:'lulu', agents:['momo','jojo']},
+  plan: {name:'Planning & Équipe', short:'PLANNING & ÉQUIPE', color:'var(--c-plan)', x0:7.8, y0:7,
+         mission:"Plannings, horaires, congés, remplacements et réunions de ton équipe d'animateurs.",
+         conn:['Google Calendar','Google Sheets','Trello'], resp:'odile', agents:['paco','ines']},
+  com:  {name:'Communication', short:'COMMUNICATION', color:'var(--c-com)', x0:14.8, y0:7,
+         mission:"Mails, messages, programme affiché, écrans d'accueil et traductions pour les vacanciers étrangers.",
+         conn:['Gmail','DeepL','Google Docs','Google Slides'], resp:'margaux', agents:['yanis','lina']},
+  cm:   {name:'Community Manager', short:'COMMUNITY MANAGER', color:'var(--c-cm)', x0:0.8, y0:12.6,
+         mission:"Les réseaux du camping côté anim : posts, visuels, Reels, TikTok, calendrier de publication.",
+         conn:['Canva','Higgsfield','Unsplash','ElevenLabs'], resp:'zoe', agents:['kenzo','maya']},
+  suivi:{name:"Suivi d'équipe", short:"SUIVI D'ÉQUIPE", color:'var(--c-suivi)', x0:7.8, y0:12.6,
+         mission:"Un référent par animateur : bien-être, objectifs, préparation et compte rendu des entretiens individuels. Rend des comptes directement au DG. Confidentiel.",
+         conn:['Google Docs','Google Calendar'], refs:['rose','basile','capucine','elio']},
+  free: {name:'Postes libres', short:'POSTES LIBRES', color:'var(--c-free)', x0:14.8, y0:12.6}
+};
+const SKIN=['#f2c9a5','#e0ac85','#c68a62','#8d5a3b','#f5d6bd','#b97a55'];
+const HAIR=['#3b2a20','#1f1a17','#7a4b28','#d9a441','#a33d2b','#5a5a5a'];
+const A = {};
+function ag(id,o){ A[id]=Object.assign({id,tasks:[],history:[],bubble:'',at:'desk',chat:[]},o); }
+ag('gaston',{name:'Gaston',role:'Directeur Général',pole:'dir',level:'dg',skin:0,hair:5,
+  bio:"Ton bras droit. Tu me dis ce que tu veux, je le confie au bon pôle, je relis ce que les responsables m'envoient et je te présente seulement ce qui est prêt. Et je note ta façon de bosser pour te déranger de moins en moins.",
+  manages:["Répartir tes demandes entre les pôles","Valider ou renvoyer le travail vérifié par les responsables","Te présenter les dossiers prêts pour ton OK","Tenir le carnet de tes préférences","Te proposer des embauches quand tu ajoutes un connecteur"],
+  conn:[], connNote:"Aucun outil d'action : il lit les livrables de tous les pôles mais n'envoie rien lui-même.",
+  tasks:[{t:"Relire le mail de bienvenue aux saisonniers",s:'chez-dg'},{t:"Préparer une proposition d'embauche pour Speko",s:'en-cours'}],
+  history:[{t:"Programme type d'une semaine en juillet",s:'ton-ok'},{t:"Affiche soirée mousse renvoyée à Zoé : trop chargée",s:'refuse'}],
+  bubble:'🗂️ 4 dossiers pour toi'});
+ag('lulu',{name:'Lulu',role:'Responsable Animation & Activités',pole:'anim',level:'resp',skin:1,hair:3,
+  bio:"Je chapeaute les activités. Avant que ça parte chez Gaston, je vérifie que c'est faisable, adapté à l'âge, à la météo et au matos qu'on a.",
+  manages:["Vérifier les fiches activités et le programme","Cohérence âges / horaires / matériel / sécurité","Répartir le boulot entre Momo et Jojo"],
+  tasks:[{t:"Relire 5 activités jour de pluie (6-10 ans)",s:'attente'}],history:[{t:"Programme type d'une semaine en juillet",s:'valide'}]});
+ag('momo',{name:'Momo',role:"Créateur d'activités",pole:'anim',level:'agent',skin:3,hair:1,
+  bio:"Je ponds des idées d'activités et je les mets en fiches : règles, durée, matos, nombre d'animateurs.",
+  manages:["Fiches activités : jeux, tournois, grands jeux","Club enfants par tranche d'âge","Plan B jour de pluie"],
+  tasks:[{t:"5 activités jour de pluie pour les 6-10 ans",s:'en-cours'}],history:[{t:"Programme type d'une semaine en juillet",s:'ton-ok'}],bubble:'✍️ activités pluie'});
+ag('jojo',{name:'Jojo',role:'Programmateur des soirées',pole:'anim',level:'agent',skin:4,hair:2,at:'pause',
+  bio:"Spectacles, quiz, karaoké, boum des enfants : je construis les soirées et les playlists qui vont avec.",
+  manages:["Programme des soirées","Playlists Spotify par soirée","Déroulé des spectacles"],
+  history:[{t:"Playlist soirée années 80",s:'valide'}],bubble:'⚽ baby-foot'});
+ag('odile',{name:'Odile',role:'Responsable Planning & Équipe',pole:'plan',level:'resp',skin:5,hair:0,
+  bio:"Je vérifie que les plannings tiennent la route : repos respectés, personne en double, toutes les activités couvertes.",
+  manages:["Contrôler plannings et horaires","Respect des repos et du temps de travail","Arbitrer les demandes de l'équipe"],
+  tasks:[{t:"Contrôler le planning de prépa (mars)",s:'chez-resp'}],history:[],bubble:'🔍 vérif. repos'});
+ag('paco',{name:'Paco',role:'Planificateur',pole:'plan',level:'agent',skin:2,hair:1,
+  bio:"Je fais les plannings et les horaires de l'équipe dans Google Sheets et je les pousse dans l'agenda.",
+  manages:["Plannings hebdo de l'équipe","Horaires des activités","Synchro avec Google Calendar"],
+  tasks:[{t:"Planning de prépa saison (mars)",s:'chez-resp'}],history:[]});
+ag('ines',{name:'Inès',role:"Chargée d'équipe",pole:'plan',level:'agent',skin:1,hair:4,
+  bio:"Congés, remplacements, réunions d'équipe : je garde le fil sur Trello.",
+  manages:["Demandes de congés et échanges de créneaux","Ordre du jour des réunions d'équipe","Tableau Trello de l'équipe"],
+  tasks:[{t:"Préparer la réunion de lancement de saison",s:'en-cours'}],bubble:'🗂️ réunion'});
+ag('margaux',{name:'Margaux',role:'Responsable Communication',pole:'com',level:'resp',skin:4,hair:4,
+  bio:"Rien ne sort sans que je l'aie relu : orthographe, ton, infos justes, bonne langue.",
+  manages:["Relire mails, messages et affiches","Vérifier les traductions","Garder un ton cohérent"],
+  tasks:[],history:[{t:"Mail de bienvenue aux saisonniers",s:'valide'}]});
+ag('yanis',{name:'Yanis',role:'Rédacteur mails & messages',pole:'com',level:'agent',skin:2,hair:0,
+  bio:"J'écris les mails et les messages : aux vacanciers, à l'équipe, à la direction du camping.",
+  manages:["Mails aux saisonniers et à la direction","Messages aux vacanciers","Réponses types"],
+  tasks:[{t:"Mail de bienvenue aux saisonniers",s:'en-cours'}],history:[]});
+ag('lina',{name:'Lina',role:'Affichage & traductions',pole:'com',level:'agent',skin:0,hair:2,
+  bio:"Programme de la semaine, affiches d'accueil, et tout ça en anglais, néerlandais et allemand pour les vacanciers étrangers.",
+  manages:["Programme hebdo affiché","Écran d'accueil sur Google Slides","Traductions EN / NL / DE avec DeepL"],
+  tasks:[{t:"Traduire le programme type en néerlandais",s:'en-cours'}],bubble:'🌍 traduction NL'});
+ag('zoe',{name:'Zoé',role:'Responsable Community Manager',pole:'cm',level:'resp',skin:0,hair:3,
+  bio:"Je veille aux réseaux : bonne image du camping, rythme de publication, visuels propres.",
+  manages:["Valider visuels, posts et vidéos","Calendrier de publication","Cohérence avec l'image du camping"],
+  tasks:[],history:[{t:"Post Insta « On recrute des animateurs »",s:'valide'},{t:"Affiche soirée mousse",s:'refuse'}]});
+ag('kenzo',{name:'Kenzo',role:'Visuels & posts',pole:'cm',level:'agent',skin:3,hair:1,
+  bio:"Je fais les visuels sur Canva et j'écris les légendes des posts.",
+  manages:["Posts Instagram et Facebook","Affiches des soirées sur Canva","Photos d'illustration Unsplash"],
+  tasks:[{t:"Refaire l'affiche soirée mousse",s:'en-cours'}],history:[{t:"Post Insta « On recrute des animateurs »",s:'ton-ok'}],bubble:'🎨 affiche mousse v2'});
+ag('maya',{name:'Maya',role:'Vidéos & Reels',pole:'cm',level:'agent',skin:5,hair:4,at:'pause',
+  bio:"Reels, petites vidéos et voix off : je fais bouger le compte.",
+  manages:["Reels et TikTok","Vidéos générées avec Higgsfield","Voix off avec ElevenLabs"],
+  history:[{t:"Teaser vidéo « Saison 2027 »",s:'valide'}],bubble:'☕ dispo'});
+const REF_BIO = n => `Je m'occupe d'un seul membre de ton équipe, l'animateur·rice n°${n} : son bien-être, ses objectifs, et le compte rendu de vos entretiens individuels.`;
+const REF_M = n => [`Suivi du bien-être de l'animateur·rice n°${n}`,"Préparer et résumer vos entretiens individuels","Suivre ses objectifs et ses points d'amélioration"];
+ag('rose',{name:'Rose',role:"Référente de l'animateur·rice n°1",pole:'suivi',level:'ref',skin:1,hair:2,bio:REF_BIO(1),manages:REF_M(1),tasks:[{t:"Trame d'entretien de début de saison",s:'en-cours'}],bubble:'📝 trame d\'entretien'});
+ag('basile',{name:'Basile',role:"Référent de l'animateur·rice n°2",pole:'suivi',level:'ref',skin:4,hair:0,at:'pause',bio:REF_BIO(2),manages:REF_M(2),bubble:'☕ pause café'});
+ag('capucine',{name:'Capucine',role:"Référente de l'animateur·rice n°3",pole:'suivi',level:'ref',skin:2,hair:3,bio:REF_BIO(3),manages:REF_M(3),tasks:[{t:"En attente : animateur·rice pas encore recruté·e",s:'attente'}]});
+ag('elio',{name:'Elio',role:"Référent de l'animateur·rice n°4",pole:'suivi',level:'ref',skin:3,hair:5,bio:REF_BIO(4),manages:REF_M(4),tasks:[{t:"En attente : animateur·rice pas encore recruté·e",s:'attente'}]});
+
+// noms renommés (préférence locale)
+try{ const saved = JSON.parse(localStorage.getItem('qg-names')||'{}'); for(const k in saved) if(A[k]) A[k].name = saved[k]; }catch(e){}
+function saveNames(){ try{ const o={}; for(const k in A) o[k]=A[k].name; localStorage.setItem('qg-names',JSON.stringify(o)); }catch(e){} }
+
+let VALID = [
+  {id:1,t:"Programme type d'une semaine en juillet",pole:'anim',by:'momo',resp:'lulu',type:'Activités',prev:"Lundi : accueil + pot de bienvenue · Mardi : olympiades piscine · Mercredi : grand jeu « Pirates de la Nublière » · Jeudi : soirée quiz…"},
+  {id:2,t:"Mail de bienvenue aux saisonniers",pole:'com',by:'yanis',resp:'margaux',type:'Mails',prev:"Salut à toutes et à tous ! Bienvenue dans l'équipe d'anim du camping Sainte-Daille. Rendez-vous le lundi 15 mars à 9h devant la salle d'anim…"},
+  {id:3,t:"Planning de prépa saison (mars)",pole:'plan',by:'paco',resp:'odile',type:'Plannings',prev:"Semaine 1 : installation et inventaire du matériel · Semaine 2 : formation sécurité + répétitions du spectacle d'ouverture…"},
+  {id:4,t:"Post Insta : « On recrute des animateurs ! »",pole:'cm',by:'kenzo',resp:'zoe',type:'Posts réseaux',prev:"☀️ Tu veux passer ton été à faire rire petits et grands ? Le camping Sainte-Daille recrute 4 animateurs·rices pour la saison 2027…"}
+];
+const CONF = {'Activités':55,'Mails':40,'Plannings':70,'Posts réseaux':25,'Entretiens':10};
+let CARNET = [
+  {t:"Tutoiement avec l'équipe d'anim, vouvoiement avec la direction du camping",ex:true},
+  {t:"Pas de messages à l'équipe après 21h",ex:true},
+  {t:"Affiches : couleurs du camping, peu de texte",ex:true},
+  {t:"Le programme de la semaine sort le dimanche soir",ex:true}
+];
+let RECRUT = {conn:'Speko',done:false};
+const DEMANDES = [{t:"Organiser la réunion de lancement de saison",s:'en-cours',to:'Planning & Équipe'}];
+
+/* ---------- Géométrie isométrique ---------- */
+const S=40, C=0.866*S, H=0.5*S, W=22, D=18, OX=D*C+24, OY=118;
+const iso=(x,y,z=0)=>[(x-y)*C+OX,(x+y)*H-z*S+OY];
+const VBW=(W+D)*C+48, VBH=(W+D)*H+OY+40;
+const P=pts=>pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+const face=(pts,fill,sh)=>`<polygon points="${P(pts)}" style="fill:${fill}"/>`+(sh?`<polygon points="${P(pts)}" fill="#000" fill-opacity="${sh}"/>`:'');
+function box(x,y,z,w,d,h,fill,o={}){
+  const I=iso;
+  const top=[I(x,y,z+h),I(x+w,y,z+h),I(x+w,y+d,z+h),I(x,y+d,z+h)];
+  const fr=[I(x,y+d,z),I(x+w,y+d,z),I(x+w,y+d,z+h),I(x,y+d,z+h)];
+  const rt=[I(x+w,y,z),I(x+w,y+d,z),I(x+w,y+d,z+h),I(x+w,y,z+h)];
+  return `<g class="bx">${face(fr,o.front||fill,.10)}${face(rt,o.right||fill,o.right?0:.22)}${face(top,o.top||fill,0)}</g>`;
+}
+const floorRect=(x,y,w,d,fill,op=1,extra='')=>`<polygon points="${P([iso(x,y),iso(x+w,y),iso(x+w,y+d),iso(x,y+d)])}" style="fill:${fill}" fill-opacity="${op}" ${extra}/>`;
+
+let OBJ=[]; // {k, svg, id?}
+const add=(k,svg,id)=>OBJ.push({k,svg,id});
+
+function desk(x,y,o={}){
+  let s=box(x,y,0,1.6,0.8,0.72,o.fill||'var(--desk)');
+  s+=box(x+0.12,y+0.12,0.72,0.07,0.52,0.42,'var(--monitor)',{right:'var(--screen)'});
+  s+=box(x+0.75,y+0.45,0.72,0.42,0.28,0.02,'#fff');
+  s+=box(x+1.3,y+0.2,0.72,0.12,0.12,0.13,o.mug||'var(--c-anim)');
+  add(x+0.8+y+0.4, s);
+}
+function chair(cx,cy,fill='var(--chair)'){
+  add(cx+cy-0.05, box(cx-0.25,cy-0.25,0.38,0.5,0.5,0.08,fill)+box(cx-0.25,cy-0.33,0.38,0.5,0.08,0.55,fill));
+}
+function plant(x,y,sz=1){
+  const p=iso(x,y,0.45*sz);
+  let s=box(x-0.22*sz,y-0.22*sz,0,0.44*sz,0.44*sz,0.42*sz,'var(--pot)');
+  const r=13*sz;
+  s+=`<circle cx="${p[0]-6*sz}" cy="${p[1]-10*sz}" r="${r}" style="fill:var(--plant-2)"/><circle cx="${p[0]+7*sz}" cy="${p[1]-14*sz}" r="${r*.9}" style="fill:var(--plant)"/><circle cx="${p[0]}" cy="${p[1]-26*sz}" r="${r*.85}" style="fill:var(--plant)"/>`;
+  add(x+y, s);
+}
+function palm(x,y){
+  const b=iso(x,y,0.4), t=iso(x,y,2.2);
+  let s=box(x-0.3,y-0.3,0,0.6,0.6,0.4,'var(--pot)');
+  s+=`<path d="M${b[0]},${b[1]} Q${b[0]+8},${(b[1]+t[1])/2} ${t[0]},${t[1]}" style="stroke:var(--shelf)" stroke-width="7" fill="none" stroke-linecap="round"/>`;
+  [[-42,6],[40,4],[-28,-18],[30,-20],[0,-26]].forEach(([dx,dy])=>{ s+=`<path d="M${t[0]},${t[1]} q${dx*.5},${dy-18} ${dx},${dy+8}" style="stroke:var(--plant)" stroke-width="9" fill="none" stroke-linecap="round"/>`; });
+  add(x+y, s);
+}
+
+/* ---------- Personnages ---------- */
+function charSVG(a,walking){
+  const pc = POLES[a.pole].color, skin=SKIN[a.skin%6], hair=HAIR[a.hair%6];
+  const dg=a.level==='dg', resp=a.level==='resp';
+  const body = dg?'var(--c-dir)':pc;
+  let s=`<g class="agent${walking?' walking':''}" data-id="${a.id}" tabindex="0" role="button" aria-label="${a.name}, ${a.role}">`;
+  s+=`<rect x="-18" y="-78" width="36" height="82" fill="transparent"/>`;
+  s+=`<ellipse cx="0" cy="0" rx="13" ry="5" fill="#000" fill-opacity=".18"/>`;
+  s+=`<g class="${walking?'':'bob'}">`;
+  s+=`<rect class="leg1" x="-8" y="-22" width="6.5" height="22" rx="3" fill="#2f3a4a"/><rect class="leg2" x="1.5" y="-22" width="6.5" height="22" rx="3" fill="#2f3a4a"/>`;
+  s+=`<rect class="body" x="-12" y="-49" width="24" height="30" rx="9" style="fill:${body}"/>`;
+  if(dg) s+=`<path d="M0,-47 l3,6 -3,14 -3,-14z" fill="#e9c46a"/><path d="M-6,-48 l6,5 6,-5" fill="none" stroke="#fff" stroke-width="2"/>`;
+  if(resp) s+=`<polygon points="0,-42 1.8,-38 6,-37.6 2.8,-35 3.7,-31 0,-33 -3.7,-31 -2.8,-35 -6,-37.6 -1.8,-38" fill="#ffd34d" stroke="#8a6a00" stroke-width=".6"/>`;
+  if(a.level==='ref') s+=`<path d="M0,-33 c-4,-4 -7,-1 -4,2 l4,4 4,-4 c3,-3 0,-6 -4,-2z" fill="#fff"/>`;
+  s+=`<circle cx="0" cy="-60" r="10.5" fill="${skin}"/>`;
+  s+=`<path d="M-10.8,-60 a10.8,10.8 0 0 1 21.6,0 q-5,-5 -10.8,-4 q-6,-1 -10.8,4z" fill="${hair}"/>`;
+  s+=`<circle cx="-3.6" cy="-58.5" r="1.4" fill="#1b1b1b"/><circle cx="3.6" cy="-58.5" r="1.4" fill="#1b1b1b"/>`;
+  s+=`<path d="M-3,-54.5 q3,2.4 6,0" fill="none" stroke="#7a3b2b" stroke-width="1.2" stroke-linecap="round"/>`;
+  s+=`</g></g>`;
+  return s;
+}
+function avatarSVG(a,size=58){
+  return `<svg width="${size}" height="${size}" viewBox="-30 -78 60 64" aria-hidden="true">${charSVG(a,false).replace('tabindex="0" role="button"','')}</svg>`;
+}
+const POS={}; // id -> [x,y]
+function seatFor(id){ return POS[id]; }
+
+/* ---------- Construction de la scène ---------- */
+let yanisNode=null;
+function build(){
+  OBJ=[];
+  let floor='', back='', over='';
+  // sols
+  floor+=floorRect(0,0,6,6,'var(--floor-pres)');
+  floor+=floorRect(6,0,7,6,'var(--floor-dg)');
+  floor+=floorRect(13,0,9,6,'var(--floor-pause)');
+  floor+=floorRect(0,6,22,12,'var(--floor-open)');
+  // lattes de bois bureau président
+  for(let i=1;i<6;i++) floor+=`<line x1="${iso(i,0)[0]}" y1="${iso(i,0)[1]}" x2="${iso(i,6)[0]}" y2="${iso(i,6)[1]}" stroke="#000" stroke-opacity=".06"/>`;
+  // tapis
+  floor+=floorRect(1.1,1.7,4,3.3,'var(--gold)',.22);
+  floor+=floorRect(7.6,1.6,4.6,3.2,'var(--c-dir)',.14);
+  floor+=floorRect(14.2,2.3,3.6,2.3,'var(--sofa)',.25);
+  for(const k of ['anim','plan','com','cm','suivi','free']){
+    const p=POLES[k];
+    floor+=floorRect(p.x0,p.y0,6,4.2,p.color,k==='free'?.08:.16, k==='free'?'stroke-dasharray="6 5" style="fill:var(--c-free);stroke:var(--c-free);stroke-width:2"':'');
+  }
+  // allée
+  floor+=floorRect(0.4,11.55,21.2,0.7,'var(--line)',.6);
+  // murs du fond
+  const WH=2.5;
+  back+=face([iso(0,0,0),iso(0,18,0),iso(0,18,WH),iso(0,0,WH)],'var(--wall-side)',0);
+  back+=face([iso(0,0,0),iso(22,0,0),iso(22,0,WH),iso(0,0,WH)],'var(--wall)',0);
+  back+=face([iso(0,0,WH),iso(22,0,WH),iso(22,-0.2,WH),iso(-0.2,-0.2,WH),iso(-0.2,18,WH),iso(0,18,WH)],'var(--wall-top)',0);
+  const winY=(a,b)=>face([iso(a,0.01,0.95),iso(b,0.01,0.95),iso(b,0.01,2.05),iso(a,0.01,2.05)],'var(--sky)',0)+`<line x1="${iso((a+b)/2,0.01,.95)[0]}" y1="${iso((a+b)/2,0.01,.95)[1]}" x2="${iso((a+b)/2,0.01,2.05)[0]}" y2="${iso((a+b)/2,0.01,2.05)[1]}" style="stroke:var(--wall)" stroke-width="3"/>`;
+  const winX=(a,b)=>face([iso(0.01,a,0.95),iso(0.01,b,0.95),iso(0.01,b,2.05),iso(0.01,a,2.05)],'var(--sky)',0)+`<line x1="${iso(.01,(a+b)/2,.95)[0]}" y1="${iso(.01,(a+b)/2,.95)[1]}" x2="${iso(.01,(a+b)/2,2.05)[0]}" y2="${iso(.01,(a+b)/2,2.05)[1]}" style="stroke:var(--wall-side)" stroke-width="3"/>`;
+  back+=winY(3.2,5.4)+winY(6.6,8.4)+winY(12.0,12.8)+winY(14.4,17.4)+winY(20.9,21.8);
+  back+=winX(2.4,4.6)+winX(7.6,10.6)+winX(13,16);
+  // tableau blanc DG
+  back+=face([iso(8.8,0.02,1.0),iso(11.6,0.02,1.0),iso(11.6,0.02,1.95),iso(8.8,0.02,1.95)],'#fbfbf7',0);
+  for(let i=0;i<3;i++){ const z=1.75-i*.22; back+=`<line x1="${iso(9.1,.03,z)[0]}" y1="${iso(9.1,.03,z)[1]}" x2="${iso(10.9-i*.4,.03,z)[0]}" y2="${iso(10.9-i*.4,.03,z)[1]}" stroke="#7d8da8" stroke-width="2" stroke-linecap="round"/>`; }
+  // textes muraux
+  const wt=(x,z,txt)=>{ const p=iso(x,0.01,z); return `<text class="walltxt" transform="matrix(0.866,0.5,0,1,${p[0].toFixed(1)},${p[1].toFixed(1)})">${txt}</text>`; };
+  back+=wt(0.5,2.2,'PRÉSIDENT')+wt(6.4,2.2,'DIRECTION')+wt(14.3,2.2,'SALLE DE PAUSE');
+
+  // --- Bureau du président
+  add(0.2+0.15+1.1+0.25, box(0.2,0.15,0,2.6,0.5,1.85,'var(--shelf)') + [0.45,0.95,1.45].map(z=>face([iso(0.35,0.65,z),iso(2.65,0.65,z),iso(2.65,0.65,z+.3),iso(0.35,0.65,z+.3)],'#000',0).replace('style="fill:#000"','fill="#000" fill-opacity=".18"')).join(''));
+  chair(3.0,2.0,'var(--gold)');
+  add(1.7+1.3+2.6+0.55, box(1.7,2.6,0,2.6,1.1,0.76,'var(--desk-pres)') + face([iso(2.6,3.71,0.45),iso(3.4,3.71,0.45),iso(3.4,3.71,0.62),iso(2.6,3.71,0.62)],'var(--gold)',0) + box(2.0,2.8,0.76,0.5,0.35,0.03,'#fff') + box(3.5,2.75,0.76,0.07,0.5,0.38,'var(--monitor)',{right:'var(--screen)'}));
+  plant(5.3,0.7,1.1);
+  plant(0.7,5.2,0.9);
+  // --- Bureau du DG
+  chair(9.4,1.75);
+  POS.gaston=[9.4,2.05];
+  add(8.4+1.1+2.4+0.5, box(8.4,2.4,0,2.2,1.0,0.74,'var(--desk)') + box(8.55,2.55,0.74,0.07,0.55,0.42,'var(--monitor)',{right:'var(--screen)'}) + [0,1,2,3].map(i=>box(9.75,2.6,0.74+i*0.05,0.45,0.32,0.045,i%2?'#f3e6c4':'#fff')).join(''));
+  add(11.3+0.5+3.7+0.5, box(11.3,3.7,0,1.0,1.0,0.68,'var(--desk)'));
+  add(11.5+3.3, box(11.55,3.25,0,0.45,0.35,0.42,'var(--chair)'));
+  plant(12.5,0.7,1.1);
+  // --- Salle de pause
+  add(14.4+1.4+0.9+0.1, box(14.4,0.9,0,2.9,0.3,0.9,'var(--sofa)'));
+  add(14.4+1.4+1.2+0.45+0.25, box(14.4,1.2,0,2.9,0.9,0.42,'var(--sofa)'));
+  add(15.3+0.6+2.9+0.3, box(15.3,2.9,0,1.3,0.7,0.35,'var(--desk-pres)')+box(15.6,3.05,0.35,0.16,0.16,0.14,'#fff'));
+  add(18.1+1.3+0.15+0.3, box(18.1,0.15,0,2.7,0.6,0.92,'var(--counter)')+box(18.4,0.22,0.92,0.55,0.42,0.55,'var(--monitor)')+box(19.4,0.25,0.92,0.18,0.18,0.16,'var(--c-anim)'));
+  add(18.6+0.75+3.4+0.4, box(18.6,3.4,0,1.5,0.8,0.8,'var(--c-plan)',{top:'#2e8b57'})+[0.25,0.55].map(o=>`<line x1="${iso(18.6,3.4+o,0.95)[0]}" y1="${iso(18.6,3.4+o,0.95)[1]}" x2="${iso(20.1,3.4+o,0.95)[0]}" y2="${iso(20.1,3.4+o,0.95)[1]}" stroke="#ccc" stroke-width="2"/>`).join(''));
+  add(20.9+0.35+4.8+0.2, box(20.9,4.8,0,0.75,0.45,0.45,'var(--c-com)',{top:'#fff'}));
+  { const b=iso(17.0,5.0,0.3); add(22, `<circle cx="${b[0]}" cy="${b[1]}" r="11" fill="#fff" stroke="#00000030"/><path d="M${b[0]-11},${b[1]} a11,11 0 0 1 11,-11 v11z" fill="#e5703a"/><path d="M${b[0]},${b[1]} h11 a11,11 0 0 1 -11,11z" fill="#3a70d4"/><path d="M${b[0]},${b[1]-11} a11,11 0 0 1 11,11 h-11z" fill="#f2c230"/>`); }
+  palm(21.3,0.8);
+  // --- Pôles
+  const isl = (k)=>{
+    const p=POLES[k]; const x0=p.x0, y0=p.y0;
+    const seats = [[x0+0.0,y0+3.2],[x0+2.0,y0+1.9],[x0+4.0,y0+0.6]];
+    const order = [p.agents[0],p.resp,p.agents[1]];
+    order.forEach((id,i)=>{
+      const [dx,dy]=seats[i];
+      const mug=['var(--c-cm)','var(--gold)','var(--c-com)'][i];
+      desk(dx,dy,{mug});
+      const cx=dx+0.9, cy=dy-0.3;
+      POS[id]=[cx,cy];
+      if(A[id].at!=='desk') chair(cx,cy+0.05);
+    });
+  };
+  ['anim','plan','com','cm'].forEach(isl);
+  { const p=POLES.suivi; const x0=p.x0,y0=p.y0;
+    const seats=[[x0+0.0,y0+3.3],[x0+1.45,y0+2.25],[x0+2.9,y0+1.2],[x0+4.35,y0+0.15+0.3]];
+    p.refs.forEach((id,i)=>{ const [dx,dy]=seats[i]; desk(dx,dy,{mug:'var(--c-suivi)'}); const cx=dx+0.9,cy=dy-0.3; POS[id]=[cx,cy]; if(A[id].at!=='desk') chair(cx,cy+0.05); });
+  }
+  // postes libres / embauchés
+  { const p=POLES.free; const x0=p.x0,y0=p.y0;
+    const seats=[[x0+0.6,y0+2.6],[x0+3.4,y0+1.2]];
+    const hired = Object.values(A).filter(a=>a.pole==='new');
+    seats.forEach(([dx,dy],i)=>{ desk(dx,dy,{mug:'var(--c-new)'}); const cx=dx+0.9,cy=dy-0.3; if(hired[i]) POS[hired[i].id]=[cx,cy]; else chair(cx,cy+0.05); });
+  }
+  plant(7.3,11.9,0.9); plant(14.3,11.9,0.9); plant(21.4,11.9,0.9); plant(21.4,17.4,1); plant(0.5,17.4,1);
+  add(14.3+6.8, box(14.1,6.6,0,0.45,0.45,1.1,'#dfeff7',{top:'var(--screen)'}));
+
+  // pause : positions
+  POS.maya=[15.6,1.7]; POS.jojo=[19.35,3.05]; POS.basile=[19.0,1.25];
+  if(A.yanis.at!=='desk') {}
+  // personnages
+  for(const id in A){
+    const a=A[id]; if(!POS[id] || id==='yanis') continue;
+    const [x,y]=POS[id]; const p=iso(x,y);
+    add(x+y+0.001, `<g transform="translate(${p[0].toFixed(1)},${p[1].toFixed(1)})">${charSVG(a,false)}</g>`, id);
+  }
+  // verre (bureaux fermés)
+  const glassY=(a,b,y,h=2.2)=>face([iso(a,y,0),iso(b,y,0),iso(b,y,h),iso(a,y,h)],'var(--glass)',0).replace(/style="fill:var\(--glass\)"/,'style="fill:var(--glass)" fill-opacity=".16"')+`<line x1="${iso(a,y,h)[0]}" y1="${iso(a,y,h)[1]}" x2="${iso(b,y,h)[0]}" y2="${iso(b,y,h)[1]}" style="stroke:var(--glass)" stroke-width="3"/><line x1="${iso(a,y,0)[0]}" y1="${iso(a,y,0)[1]}" x2="${iso(a,y,h)[0]}" y2="${iso(a,y,h)[1]}" style="stroke:var(--glass)" stroke-width="2"/>`;
+  const glassX=(a,b,x,h=2.2)=>face([iso(x,a,0),iso(x,b,0),iso(x,b,h),iso(x,a,h)],'var(--glass)',0).replace(/style="fill:var\(--glass\)"/,'style="fill:var(--glass)" fill-opacity=".16"')+`<line x1="${iso(x,a,h)[0]}" y1="${iso(x,a,h)[1]}" x2="${iso(x,b,h)[0]}" y2="${iso(x,b,h)[1]}" style="stroke:var(--glass)" stroke-width="3"/><line x1="${iso(x,b,0)[0]}" y1="${iso(x,b,0)[1]}" x2="${iso(x,b,h)[0]}" y2="${iso(x,b,h)[1]}" style="stroke:var(--glass)" stroke-width="2"/>`;
+  for(let x=0;x<13;x++){ if(x===3||x===11) continue; add(x+0.5+6+0.06, `<g class="glass">${glassY(x,x+1,6)}</g>`); }
+  for(let y=0;y<6;y++){ add(6+y+0.5-0.1, `<g class="glass">${glassX(y,y+1,6)}</g>`); add(13+y+0.5-0.1, `<g class="glass">${glassX(y,y+1,13)}</g>`); }
+
+  // --- calque d'étiquettes (toujours dessus)
+  // zones cliquables
+  const zone=(k,x,y,label,color)=>{ const p=iso(x,y,0); const w=label.length*8.2+24; return `<g class="zone" data-zone="${k}" tabindex="0" role="button" aria-label="${label}" transform="translate(${p[0].toFixed(1)},${p[1].toFixed(1)})"><rect x="${-w/2}" y="-13" width="${w}" height="26" rx="13" style="fill:${color}" stroke="#00000022"/><text x="0" y="4.5" text-anchor="middle">${label}</text></g>`; };
+  for(const k of ['anim','plan','com','cm','suivi','free']){ const p=POLES[k]; over+=zone(k,p.x0+4.7,p.y0+3.7,p.short,p.color); }
+  over+=zone('pause',15.2,4.7,'SALLE DE PAUSE','var(--c-plan)');
+  // bureau du président : zone chaude
+  { const c=iso(3.0,3.15,0); over+=`<g class="hot" data-zone="pres" tabindex="0" role="button" aria-label="Ton bureau : faire une demande"><ellipse class="ring" cx="${c[0]}" cy="${c[1]}" rx="98" ry="56"/><ellipse cx="${c[0]}" cy="${c[1]}" rx="98" ry="56" fill="transparent"/></g>`;
+    over+=zone('pres',1.1,4.7,'TON BUREAU','var(--gold)'); }
+  // pastille dossiers DG
+  { const b=iso(10.0,2.75,1.15); over+=`<g class="badge hot" data-zone="valid" transform="translate(${b[0]},${b[1]})"><circle r="12"/><text y="4.3" text-anchor="middle" id="badgeN">${VALID.length}</text></g>`; }
+  // noms et bulles
+  for(const id in A){ if(!POS[id]) continue; over+=`<g class="lbl" data-for="${id}"></g>`; }
+
+  OBJ.sort((a,b)=>a.k-b.k);
+  const svg=document.getElementById('scene');
+  svg.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  svg.innerHTML=`<g id="floor">${floor}</g><g id="back">${back}</g><g id="objs">${OBJ.map(o=>`<g data-k="${o.k.toFixed(3)}"${o.id?` data-obj="${o.id}"`:''}>${o.svg}</g>`).join('')}</g><g id="over">${over}</g>`;
+  // Yanis (mobile)
+  yanisNode=document.createElementNS('http://www.w3.org/2000/svg','g');
+  yanisNode.innerHTML=charSVG(A.yanis,false);
+  document.getElementById('objs').appendChild(yanisNode);
+  placeYanis(walk.pos[0],walk.pos[1],false,true);
+  for(const id in A) if(POS[id]) drawLabel(id);
+}
+
+function drawLabel(id){
+  const g=document.querySelector(`.lbl[data-for="${id}"]`); if(!g) return;
+  const a=A[id]; const [x,y]= id==='yanis'?walk.pos:POS[id]; const p=iso(x,y);
+  const nw=a.name.length*6.6+16;
+  let s=`<rect class="namebg" x="${-nw/2}" y="-90" width="${nw}" height="17" rx="8.5"/><circle cx="${-nw/2+8}" cy="-81.5" r="3" style="fill:${a.level==='dg'?'var(--c-dir)':POLES[a.pole].color}"/><text class="name" x="4" y="-77.6" text-anchor="middle">${esc(a.name)}</text>`;
+  if(a.bubble && bubblesOn){
+    const bw=Math.min(200,[...a.bubble].length*6.3+18);
+    const o=(a.level==='resp'||a.level==='dg')?-22:0;
+    s+=`<g transform="translate(0,${o})"><rect class="bbg" x="${-bw/2}" y="-118" width="${bw}" height="22" rx="11"/><path d="M-5,-96.5 l5,5 5,-5z" class="bbg" style="stroke:none"/><text class="btxt" x="0" y="-103" text-anchor="middle">${esc(a.bubble)}</text></g>`;
+  }
+  g.setAttribute('transform',`translate(${p[0].toFixed(1)},${p[1].toFixed(1)})`);
+  g.innerHTML=s;
+}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let bubblesOn=true;
+
+/* ---------- Yanis qui porte son dossier ---------- */
+const walk={pos:[15.7,9.9],path:[],i:0,t:0,wait:0,phase:0};
+const ROUTE=[
+  {to:[15.7,9.9],wait:5,b:'✍️ mail de bienvenue',onArrive(){}},
+  {to:[16.6,10.15]},{to:[17.7,10.15],wait:3.2,b:'📁 pour Margaux',onArrive(){ setBubble('margaux','🔍 je relis…'); setTimeout(()=>setBubble('margaux','👍 c\'est bon !'),1600); }},
+  {to:[14.3,10.15],b:'📁 direction Gaston',onLeave(){ setTimeout(()=>setBubble('margaux',''),1200);} },
+  {to:[14.3,6.7]},{to:[11.5,6.7]},{to:[11.5,5.3]},{to:[10.0,3.95],wait:3.2,b:'📁 vérifié par Margaux',onArrive(){ setBubble('gaston','✅ validé, pour le président'); bumpValid(); }},
+  {to:[11.5,5.3],b:'🚶 retour au poste',onLeave(){ setTimeout(()=>setBubble('gaston','🗂️ '+VALID.length+' dossiers pour toi'),1500);} },
+  {to:[11.5,6.7]},{to:[14.3,6.7]},{to:[14.3,10.15]},{to:[15.7,10.15]}
+];
+let step=0, waitLeft=4, lastT=0, reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function setBubble(id,b){ A[id].bubble=b; drawLabel(id); }
+function placeYanis(x,y,walking,force){
+  walk.pos=[x,y]; const p=iso(x,y);
+  const inner=yanisNode.firstChild;
+  yanisNode.setAttribute('transform',`translate(${p[0].toFixed(1)},${p[1].toFixed(1)})`);
+  if(inner && inner.classList){ inner.classList.toggle('walking',walking); const bobg=inner.querySelector('g'); if(bobg) bobg.classList.toggle('bob',!walking); }
+  // ordre de profondeur
+  const k=x+y; const objs=yanisNode.parentNode; const kids=[...objs.children].filter(n=>n!==yanisNode);
+  let before=null; for(const n of kids){ if(parseFloat(n.dataset.k)>k){ before=n; break; } }
+  if(force || yanisNode.nextSibling!==before) objs.insertBefore(yanisNode,before);
+  drawLabel('yanis');
+}
+function tick(t){
+  const dt=Math.min(0.05,(t-(lastT||t))/1000); lastT=t;
+  if(waitLeft>0){ waitLeft-=dt; if(waitLeft<=0){ const cur=ROUTE[step]; cur.onLeave&&cur.onLeave(); step=(step+1)%ROUTE.length; const nx=ROUTE[step]; if(nx.b) setBubble('yanis',nx.b); } }
+  else{
+    const tgt=ROUTE[step].to; const [x,y]=walk.pos; const dx=tgt[0]-x, dy=tgt[1]-y; const d=Math.hypot(dx,dy); const sp=1.9*dt;
+    if(d<=sp){ placeYanis(tgt[0],tgt[1],false); const cur=ROUTE[step]; if(cur.b) setBubble('yanis',cur.b); cur.onArrive&&cur.onArrive(); waitLeft=cur.wait||0.0001; }
+    else placeYanis(x+dx/d*sp,y+dy/d*sp,true);
+  }
+  requestAnimationFrame(tick);
+}
+function bumpValid(){ const b=document.getElementById('btnValid'); b.classList.remove('pulse'); void b.offsetWidth; b.classList.add('pulse'); }
+
+/* ---------- Vue : zoom & déplacement ---------- */
+const vb={x:0,y:0,w:VBW,h:VBH};
+const svg=document.getElementById('scene');
+function applyVB(){ svg.setAttribute('viewBox',`${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`); }
+function zoom(f,cx,cy){ const nw=Math.min(VBW*1.15,Math.max(VBW*0.3,vb.w*f)); const r=nw/vb.w; cx=cx??vb.x+vb.w/2; cy=cy??vb.y+vb.h/2; vb.x=cx-(cx-vb.x)*r; vb.y=cy-(cy-vb.y)*r; vb.w=nw; vb.h=vb.h*r; applyVB(); }
+document.getElementById('zIn').onclick=()=>zoom(0.8);
+document.getElementById('zOut').onclick=()=>zoom(1.25);
+document.getElementById('zFit').onclick=()=>{ Object.assign(vb,{x:0,y:0,w:VBW,h:VBH}); applyVB(); };
+let drag=null, moved=false;
+svg.addEventListener('pointerdown',e=>{ drag={x:e.clientX,y:e.clientY,vx:vb.x,vy:vb.y}; moved=false; });
+window.addEventListener('pointermove',e=>{ if(!drag) return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y; if(Math.hypot(dx,dy)>6) moved=true; if(!moved) return; const r=svg.getBoundingClientRect(); const s=Math.max(vb.w/r.width,vb.h/r.height); vb.x=drag.vx-dx*s; vb.y=drag.vy-dy*s; applyVB(); });
+window.addEventListener('pointerup',()=>{ drag=null; });
+svg.addEventListener('wheel',e=>{ e.preventDefault(); const r=svg.getBoundingClientRect(); const pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY; const m=pt.matrixTransform(svg.getScreenCTM().inverse()); zoom(e.deltaY>0?1.1:0.9,m.x,m.y); },{passive:false});
+svg.addEventListener('click',e=>{
+  if(moved) return;
+  const ag=e.target.closest('.agent'); if(ag){ openAgent(ag.dataset.id); return; }
+  const z=e.target.closest('[data-zone]'); if(z){ openZone(z.dataset.zone); }
+});
+svg.addEventListener('keydown',e=>{ if(e.key!=='Enter'&&e.key!==' ') return; const ag=e.target.closest('.agent'); if(ag){e.preventDefault();openAgent(ag.dataset.id);return;} const z=e.target.closest('[data-zone]'); if(z){e.preventDefault();openZone(z.dataset.zone);} });
+
+/* ---------- Panneau ---------- */
+const panel=document.getElementById('panel'), ph=document.getElementById('ph'), pb=document.getElementById('pb'), app=document.getElementById('app');
+function open(head,body){ ph.innerHTML=head+`<button class="close" type="button" aria-label="Fermer" id="pClose">✕</button>`; pb.innerHTML=body; panel.classList.add('open'); app.classList.add('has-panel'); pb.scrollTop=0; document.getElementById('pClose').onclick=close; }
+function close(){ panel.classList.remove('open'); app.classList.remove('has-panel'); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
+const ST={'en-cours':'En cours','chez-resp':'Chez le responsable','chez-dg':'Chez le DG','ton-ok':'Attend ton OK','valide':'Validé','refuse':'Refusé','attente':'En attente'};
+const taskHTML=t=>`<div class="task"><span>${esc(t.t)}</span><span class="st ${t.s}">${ST[t.s]}</span></div>`;
+const who=id=>`<button type="button" data-open="${id}">${esc(A[id].name)}</button>`;
+function connHTML(list){
+  const on=list.map(c=>`<span class="chip"><i style="background:var(--ok)"></i>${c}</span>`).join('');
+  const off=ALL_CONN.filter(c=>!list.includes(c)).map(c=>`<span class="chip off">${c}</span>`).join('');
+  return `<div class="tagrow">${on||'<span class="chip">Aucun connecteur</span>'}</div><div class="sec" style="padding-top:10px"><h3>Pas accès à</h3><div class="tagrow">${off}</div></div>`;
+}
+function bossOf(a){ if(a.level==='dg') return null; if(a.level==='resp'||a.level==='ref'||a.pole==='new'&&a.level==='resp') return 'gaston'; const p=POLES[a.pole]; return p.resp||'gaston'; }
+
+function openAgent(id){
+  const a=A[id]; const p=POLES[a.pole];
+  const conn = a.level==='dg'?[]:(a.conn||p.conn||[]);
+  const boss=bossOf(a);
+  let chain='';
+  if(a.level==='dg') chain=`<div class="chain">Rend des comptes à : <b>toi, le président</b></div>`;
+  else if(boss==='gaston') chain=`<div class="chain">Rend des comptes à : ${who('gaston')} → toi</div>`;
+  else chain=`<div class="chain">Rend des comptes à : ${who(boss)} → ${who('gaston')} → toi</div>`;
+  const levelLbl={dg:'Direction',resp:'Responsable de pôle',agent:'Agent',ref:'Référent·e'}[a.level];
+  const head=`<div class="av">${avatarSVG(a)}</div><div class="who"><h2 id="pName">${esc(a.name)}</h2><p class="role">${esc(a.role)}</p><span class="poletag" style="background:${a.level==='dg'?'var(--c-dir)':p.color}">${a.level==='dg'?'Direction générale':esc(p.name)} · ${levelLbl}</span></div>`;
+  let body=`<div class="sec"><h3>Qui je suis</h3><p>${esc(a.bio)}</p></div>
+  <div class="sec"><h3>Ce que je gère</h3><ul class="list">${a.manages.map(m=>`<li>${esc(m)}</li>`).join('')}</ul></div>
+  <div class="sec"><h3>Hiérarchie</h3>${chain}</div>
+  <div class="sec"><h3>Mes connecteurs</h3>${connHTML(conn)}${a.connNote?`<div class="note">${esc(a.connNote)}</div>`:''}${a.pole==='suivi'?`<div class="note">Confidentiel : ses notes ne sont visibles que par toi et ${esc(A.gaston.name)}.</div>`:''}</div>`;
+  if(a.level==='dg') body+=dgExtras();
+  body+=`<div class="sec"><h3>En ce moment</h3>${a.at==='pause'?`<div class="task"><span>Rien en cours, je suis en salle de pause</span><span class="st attente">Dispo</span></div>`:''}${a.tasks.map(taskHTML).join('')||(a.at==='pause'?'':'<p style="color:var(--muted)">Rien en cours.</p>')}</div>
+  <div class="sec"><h3>Historique</h3>${a.history.map(taskHTML).join('')||'<p style="color:var(--muted)">Pas encore d\'historique.</p>'}</div>
+  <div class="sec"><h3>Lui parler</h3><div class="talk"><div class="msgs" id="msgs">${a.chat.map(m=>`<div class="msg ${m.me?'me':'them'}">${esc(m.t)}</div>`).join('')}</div><textarea id="talkIn" placeholder="Demande quelque chose à ${esc(a.name)}…"></textarea><div class="row"><button class="btn primary" id="talkSend" type="button">Envoyer</button><button class="btn" id="rename" type="button">Renommer</button></div></div></div>`;
+  open(head,body);
+  wireCommon();
+  document.getElementById('talkSend').onclick=()=>{
+    const v=document.getElementById('talkIn').value.trim(); if(!v) return;
+    a.chat.push({me:true,t:v});
+    const reply = a.level==='dg' ? `Bien reçu ! Je confie ça au bon pôle et je reviens vers toi quand c'est vérifié.` : a.level==='agent' ? `Ça marche, je m'y mets. ${esc(A[boss].name)} relira avant que ça parte chez ${esc(A.gaston.name)}.` : `Noté ! Je m'en occupe et ${esc(A.gaston.name)} validera.`;
+    a.chat.push({me:false,t:reply+' (réponse de maquette)'});
+    a.tasks.unshift({t:v.length>60?v.slice(0,57)+'…':v,s:'en-cours'});
+    a.at='desk'; if(a.bubble.startsWith('☕')||a.bubble.startsWith('⚽')) a.bubble='✍️ nouvelle demande';
+    openAgent(id);
+    if(POS[id] && ['maya','jojo','basile'].includes(id)){ delete POS[id]; build(); }
+    else drawLabel(id);
+  };
+  document.getElementById('rename').onclick=()=>{
+    const h=document.getElementById('pName');
+    h.innerHTML=`<input id="renIn" value="${esc(a.name)}" style="font:800 22px var(--f-display);width:100%;border:1px solid var(--line);border-radius:10px;padding:4px 8px;background:var(--surface-2)" aria-label="Nouveau nom">`;
+    const i=document.getElementById('renIn'); i.focus(); i.select();
+    const done=()=>{ const v=i.value.trim(); if(v){ a.name=v.slice(0,18); saveNames(); drawLabel(id); toast(`C'est noté : il s'appelle maintenant ${a.name}.`);} openAgent(id); };
+    i.addEventListener('keydown',e=>{ if(e.key==='Enter') done(); }); i.addEventListener('blur',done);
+  };
+  if(a.level==='dg') wireDG();
+}
+
+function dgExtras(){
+  return `<div class="sec"><h3>Dossiers qui t'attendent</h3><button class="btn" type="button" id="goValid">Voir les ${VALID.length} dossiers</button></div>
+  <div class="sec"><h3>Carnet de ${esc(A.gaston.name)} : ta façon de bosser</h3><ul class="list carnet" id="carnet">${CARNET.map(c=>`<li class="${c.ex?'':'learned'}">${esc(c.t)}${c.ex?'<span class="ex">exemple</span>':''}</li>`).join('')}</ul><div class="row" style="margin-top:10px"><button class="btn" type="button" id="quiz">Lancer le questionnaire de départ</button></div><div id="quizBox"></div></div>
+  <div class="sec"><h3>Confiance par type de tâche</h3>${Object.entries(CONF).map(([k,v])=>`<div class="gauge"><span>${k}</span><div class="bar"><b style="width:${v}%"></b></div><span class="v">${v}%</span></div>`).join('')}<div class="note">Elle monte quand tu valides, elle baisse quand tu refuses. Au-delà de 80 %, ${esc(A.gaston.name)} te proposera de valider ce type de tâche à ta place. Tu gardes toujours le dernier mot.</div></div>`;
+}
+const QUIZ=[
+  {q:"Avec les vacanciers, on tutoie ou on vouvoie ?",a:["Tutoiement","Vouvoiement","Ça dépend du public"],l:v=>`Vacanciers : ${v.toLowerCase()}`},
+  {q:"Le programme de la semaine, tu le veux prêt pour quand ?",a:["Vendredi","Samedi","Dimanche soir"],l:v=>`Programme de la semaine prêt le ${v.toLowerCase()}`},
+  {q:"Tes animateurs, tu leur écris surtout par…",a:["Mail","SMS / WhatsApp","Trello"],l:v=>`Canal préféré avec l'équipe : ${v}`}
+];
+function wireDG(){
+  document.getElementById('goValid').onclick=openValid;
+  document.getElementById('quiz').onclick=()=>{ let i=0; const box=document.getElementById('quizBox');
+    const show=()=>{ if(i>=QUIZ.length){ box.innerHTML=`<div class="note">Merci ! ${esc(A.gaston.name)} a noté tes réponses dans son carnet. Le vrai questionnaire comptera une vingtaine de questions.</div>`; return; }
+      const q=QUIZ[i]; box.innerHTML=`<div class="card" style="margin-top:10px"><div class="meta">Question ${i+1} sur ${QUIZ.length} (aperçu)</div><h4>${q.q}</h4><div class="seg" style="margin-top:8px">${q.a.map(x=>`<button type="button" data-a="${esc(x)}">${x}</button>`).join('')}</div></div>`;
+      box.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{ CARNET.unshift({t:q.l(b.dataset.a)}); const ul=document.getElementById('carnet'); ul.insertAdjacentHTML('afterbegin',`<li class="learned">${esc(q.l(b.dataset.a))}</li>`); i++; show(); }); };
+    show(); };
+}
+function wireCommon(){ pb.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openAgent(b.dataset.open)); }
+
+function openZone(z){
+  if(z==='pres') return openPres();
+  if(z==='valid') return openValid();
+  if(z==='dg') return openAgent('gaston');
+  if(z==='pause') return openPause();
+  if(z==='free') return openRecrut();
+  openPole(z);
+}
+function openPole(k){
+  const p=POLES[k];
+  const members = p.refs ? p.refs : [p.resp,...p.agents];
+  const head=`<div class="av" style="background:${p.color}"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="11" width="24" height="14" rx="3" fill="#fff" opacity=".9"/><rect x="9" y="5" width="12" height="7" rx="2" fill="none" stroke="#fff" stroke-width="2.5"/></svg></div><div class="who"><h2>${esc(p.name)}</h2><p class="role">${p.refs?'4 référents, un par animateur':'1 responsable · 2 agents'}</p></div>`;
+  const body=`<div class="sec"><h3>Mission du pôle</h3><p>${esc(p.mission)}</p></div>
+  <div class="sec"><h3>L'équipe</h3>${members.map(id=>{const a=A[id];return `<div class="task" role="button" tabindex="0" data-open="${id}" style="cursor:pointer"><span style="display:flex;align-items:center;gap:10px">${avatarSVG(a,34)}<span><b>${esc(a.name)}</b><br><span style="color:var(--muted);font-size:13px">${esc(a.role)}</span></span></span><span class="st ${a.at==='pause'?'attente':'en-cours'}">${a.at==='pause'?'En pause':'Au poste'}</span></div>`}).join('')}</div>
+  <div class="sec"><h3>Connecteurs du pôle</h3>${connHTML(p.conn)}<div class="note">Seul ce pôle a accès à ces outils. Les autres pôles ne peuvent pas s'en servir.</div></div>
+  <div class="sec"><h3>Demande directe au pôle</h3><div class="talk"><textarea id="poleIn" placeholder="Ta demande ira à ${esc(A[p.resp||p.refs[0]].name)}${p.refs?'':' (responsable)'}, ${esc(A.gaston.name)} sera tenu au courant."></textarea><div class="row"><button class="btn primary" type="button" id="poleSend">Envoyer au pôle</button></div></div></div>`;
+  open(head,body); wireCommon();
+  document.getElementById('poleSend').onclick=()=>{ const v=document.getElementById('poleIn').value.trim(); if(!v) return; const r=A[p.resp||p.refs[0]]; r.tasks.unshift({t:v.length>60?v.slice(0,57)+'…':v,s:'en-cours'}); DEMANDES.unshift({t:v,s:'en-cours',to:p.name}); setBubble(r.id,'📥 demande du président'); toast(`Envoyé à ${r.name}. ${A.gaston.name} est en copie.`); document.getElementById('poleIn').value=''; };
+}
+function openPres(){
+  const head=`<div class="av" style="background:var(--gold)"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M4 22 L6 9 L11 15 L15 6 L19 15 L24 9 L26 22 Z" fill="#fff"/></svg></div><div class="who"><h2>Ton bureau</h2><p class="role">Président du QG</p></div>`;
+  const opts=[['dg',`${A.gaston.name} répartit`],...['anim','plan','com','cm','suivi'].map(k=>[k,POLES[k].name])];
+  const body=`<div class="sec"><h3>Nouvelle demande</h3><div class="talk"><textarea id="presIn" placeholder="Ex. : Crée-moi 5 activités pour les 6-10 ans un jour de pluie"></textarea>
+  <div><div style="font-size:13px;color:var(--muted);margin-bottom:6px">À qui ?</div><div class="seg" id="presTo">${opts.map((o,i)=>`<button type="button" data-to="${o[0]}" aria-pressed="${i===0}">${esc(o[1])}</button>`).join('')}</div></div>
+  <div class="row"><button class="btn primary" type="button" id="presSend">Envoyer la demande</button></div></div>
+  <div class="sec" style="padding-top:12px"><h3>Idées de demandes</h3><div class="seg" id="ideas">${["Crée 5 activités pluie pour les 6-10 ans","Fais le planning de la semaine du 12 avril","Prépare un post Insta pour la soirée mousse","Rédige le mail d'accueil des animateurs","Prépare mon entretien avec l'animateur n°1"].map(x=>`<button type="button">${x}</button>`).join('')}</div></div></div>
+  <div class="sec"><h3>Tes demandes récentes</h3><div id="dem">${DEMANDES.map(d=>`<div class="task"><span>${esc(d.t)}<br><span style="color:var(--muted);font-size:12.5px">→ ${esc(d.to)}</span></span><span class="st ${d.s}">${ST[d.s]}</span></div>`).join('')}</div></div>
+  <div class="sec"><h3>À traiter</h3><div class="row"><button class="btn" type="button" id="pv">${VALID.length} dossiers à valider</button><button class="btn" type="button" id="pr">${RECRUT.done?'Recrutement à jour':'1 proposition d\'embauche'}</button></div></div>`;
+  open(head,body);
+  let to='dg';
+  document.querySelectorAll('#presTo button').forEach(b=>b.onclick=()=>{ to=b.dataset.to; document.querySelectorAll('#presTo button').forEach(x=>x.setAttribute('aria-pressed',x===b)); });
+  document.querySelectorAll('#ideas button').forEach(b=>b.onclick=()=>{ document.getElementById('presIn').value=b.textContent; });
+  document.getElementById('pv').onclick=openValid; document.getElementById('pr').onclick=openRecrut;
+  document.getElementById('presSend').onclick=()=>{
+    const v=document.getElementById('presIn').value.trim(); if(!v) return;
+    const dest = to==='dg'?'Gaston (répartition)':POLES[to].name;
+    DEMANDES.unshift({t:v,s:'en-cours',to:dest});
+    if(to==='dg'){ A.gaston.tasks.unshift({t:'Répartir : '+(v.length>50?v.slice(0,47)+'…':v),s:'en-cours'}); setBubble('gaston','📥 demande du président !'); }
+    else { const r=A[POLES[to].resp||POLES[to].refs[0]]; r.tasks.unshift({t:v,s:'en-cours'}); setBubble(r.id,'📥 demande du président'); }
+    toast(to==='dg'?`${A.gaston.name} a reçu ta demande et va la confier au bon pôle.`:`Envoyé directement au pôle ${POLES[to].name}.`);
+    openPres();
+  };
+}
+function openValid(){
+  const head=`<div class="av" style="background:var(--warn)"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M5 8h8l2 3h10v13H5z" fill="#fff"/></svg></div><div class="who"><h2>À valider</h2><p class="role">Vérifié par le responsable, validé par ${esc(A.gaston.name)}. Rien ne part sans ton OK.</p></div>`;
+  const body=VALID.length? VALID.map(v=>`<div class="card" data-v="${v.id}"><h4>${esc(v.t)}</h4><div class="meta"><span style="color:${POLES[v.pole].color};font-weight:700">${esc(POLES[v.pole].name)}</span> · fait par ${esc(A[v.by].name)} · vérifié par ${esc(A[v.resp].name)} ✓ · validé par ${esc(A.gaston.name)} ✓</div><blockquote>${esc(v.prev)}</blockquote><div class="row"><button class="btn ok" type="button" data-act="ok">OK président</button><button class="btn" type="button" data-act="fix">À corriger</button><button class="btn bad" type="button" data-act="no">Refuser</button></div><div class="why"></div></div>`).join('') + `<div class="note" style="margin-top:14px">Les contenus ci-dessus sont des exemples de maquette.</div>`
+  : `<div class="sec"><p>Tout est traité. ${esc(A.gaston.name)} te préviendra au prochain dossier.</p></div>`;
+  open(head,`<div class="sec" style="padding-top:12px">${body}</div>`);
+  pb.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>{
+    const card=b.closest('.card'); const v=VALID.find(x=>x.id==card.dataset.v); const act=b.dataset.act;
+    if(act==='ok'){ CONF[v.type]=Math.min(100,CONF[v.type]+5); resolve(v,'valide'); toast(`Validé. ${A[v.by].name} peut l'envoyer (dans la vraie version). Confiance ${v.type} : ${CONF[v.type]} %.`); return; }
+    const why=card.querySelector('.why');
+    why.innerHTML=`<div class="talk" style="margin-top:10px"><textarea placeholder="${act==='fix'?'Qu\'est-ce qu\'il faut changer ?':'Pourquoi tu refuses ?'} ${esc(A.gaston.name)} s'en souviendra."></textarea><div class="row"><button class="btn primary" type="button">Envoyer à ${esc(A.gaston.name)}</button></div></div>`;
+    why.querySelector('button').onclick=()=>{ const r=why.querySelector('textarea').value.trim()||'(sans précision)'; CARNET.unshift({t:`${v.type} : ${r}`}); CONF[v.type]=Math.max(0,CONF[v.type]-(act==='no'?10:5)); resolve(v,act==='no'?'refuse':'en-cours'); toast(`${A.gaston.name} a noté ta remarque dans son carnet et renvoie le dossier à ${A[v.resp].name}.`); };
+  });
+}
+function resolve(v,s){ VALID=VALID.filter(x=>x!==v); A[v.by].history.unshift({t:v.t,s}); document.getElementById('nValid').textContent=VALID.length; const bn=document.getElementById('badgeN'); if(bn) bn.textContent=VALID.length; setBubble('gaston',VALID.length?`🗂️ ${VALID.length} dossiers pour toi`:'😎 tout est à jour'); openValid(); }
+function openPause(){
+  const ids=Object.keys(A).filter(id=>A[id].at==='pause');
+  const head=`<div class="av" style="background:var(--c-plan)"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M6 11h15v7a6 6 0 0 1-6 6h-3a6 6 0 0 1-6-6z" fill="#fff"/><path d="M21 13h2a3 3 0 0 1 0 6h-2" fill="none" stroke="#fff" stroke-width="2.4"/></svg></div><div class="who"><h2>Salle de pause</h2><p class="role">Quand quelqu'un n'a rien à faire, il vient ici.</p></div>`;
+  const body=`<div class="sec"><h3>En pause en ce moment</h3>${ids.map(id=>{const a=A[id];return `<div class="task" role="button" tabindex="0" data-open="${id}" style="cursor:pointer"><span style="display:flex;align-items:center;gap:10px">${avatarSVG(a,34)}<span><b>${esc(a.name)}</b><br><span style="color:var(--muted);font-size:13px">${esc(a.role)}</span></span></span><span class="st attente">Dispo</span></div>`}).join('')||'<p>Personne : tout le monde bosse !</p>'}</div>
+  <div class="note">Dès qu'un agent reçoit une demande, il retourne à son bureau. Si toute l'équipe est ici, c'est que plus rien n'attend.</div>`;
+  open(head,body); wireCommon();
+}
+function openRecrut(){
+  const head=`<div class="av" style="background:var(--c-new)"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle cx="13" cy="10" r="5" fill="#fff"/><path d="M4 25a9 9 0 0 1 18 0z" fill="#fff"/><path d="M23 9v8M19 13h8" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg></div><div class="who"><h2>Recrutement</h2><p class="role">Propositions de ${esc(A.gaston.name)} quand tu ajoutes un connecteur</p></div>`;
+  const body = RECRUT.done ? `<div class="sec"><p>${esc(RECRUT.done)}</p><div class="note">Ajoute un nouveau connecteur et ${esc(A.gaston.name)} te fera une nouvelle proposition ici.</div></div>` :
+  `<div class="sec"><div class="card"><div class="meta">Nouveau connecteur détecté</div><h4>Speko : appels et SMS automatiques</h4><blockquote>« Président, avec Speko on pourrait envoyer des SMS de rappel aux vacanciers inscrits aux activités, et répondre au téléphone pour les infos du programme. Je te propose deux options. » ${esc(A.gaston.name)}</blockquote>
+  <div class="opt"><button class="btn" type="button" id="rA"><b>A. Embaucher</b>&nbsp;un nouveau pôle « Accueil & rappels » : Sacha (responsable) + Nina (agent). Ils prennent les 2 postes libres.</button>
+  <button class="btn" type="button" id="rB"><b>B. Affecter</b>&nbsp;Speko au pôle Communication : ${esc(A.yanis.name)} envoie les SMS, ${esc(A.margaux.name)} vérifie.</button></div></div>
+  <div class="note">${esc(A.gaston.name)} recommande l'option B tant que le volume reste faible (moins de 50 SMS par semaine).</div></div>`;
+  open(head,body);
+  if(RECRUT.done) return;
+  document.getElementById('rA').onclick=()=>{
+    POLES.new={name:'Accueil & rappels',short:'ACCUEIL & RAPPELS',color:'var(--c-new)',mission:"SMS de rappel aux vacanciers inscrits et réponses au téléphone sur le programme.",conn:['Speko'],resp:'sacha',agents:['nina']};
+    ag('sacha',{name:'Sacha',role:'Responsable Accueil & rappels',pole:'new',level:'resp',skin:2,hair:3,bio:"Fraîchement embauchée ! Je vérifie chaque SMS et chaque réponse téléphonique avant qu'ils partent.",manages:["Vérifier les SMS de rappel","Valider les réponses téléphoniques types"],bubble:'👋 nouvelle !'});
+    ag('nina',{name:'Nina',role:'Agent rappels & téléphone',pole:'new',level:'agent',skin:1,hair:0,bio:"J'envoie les SMS de rappel aux vacanciers inscrits et je réponds au téléphone sur le programme.",manages:["SMS de rappel des activités","Réponses téléphoniques sur le programme"],bubble:'👋 premier jour'});
+    POLES.free.short='ACCUEIL & RAPPELS'; POLES.free.color='var(--c-new)';
+    POLES.free.mission=POLES.new.mission;
+    RECRUT.done=`Sacha et Nina ont rejoint le QG (pôle Accueil & rappels). Seul ce pôle a accès à Speko.`;
+    document.getElementById('nRecrut').hidden=true; build(); toast('Bienvenue à Sacha et Nina !'); openRecrut();
+  };
+  document.getElementById('rB').onclick=()=>{
+    POLES.com.conn.push('Speko'); A.yanis.manages.push('SMS de rappel avec Speko');
+    RECRUT.done=`Speko est affecté au pôle Communication : ${A.yanis.name} s'en sert, ${A.margaux.name} vérifie.`;
+    document.getElementById('nRecrut').hidden=true; toast('Speko affecté au pôle Communication.'); openRecrut();
+  };
+}
+// le pôle "free" redirige vers le nouveau pôle une fois embauché
+const _openZone=openZone;
+openZone=function(z){ if(z==='free' && POLES.new) return openPole('new'); return _openZone(z); };
+
+document.getElementById('btnPres').onclick=openPres;
+document.getElementById('btnValid').onclick=openValid;
+document.getElementById('btnRecrut').onclick=openRecrut;
+
+let tt; function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),3200); }
+
+// compte à rebours jusqu'à l'ouverture (15 mars 2027)
+try{ const d=Math.ceil((new Date(2027,2,15)-new Date())/864e5); if(d>0) document.getElementById('countdown').textContent='J-'+d; else document.getElementById('countdown').textContent='Saison en cours'; }catch(e){}
+
+A.yanis.bubble='✍️ mail de bienvenue';
+build();
+if(!reduce) requestAnimationFrame(tick);
+})();
+</script>
