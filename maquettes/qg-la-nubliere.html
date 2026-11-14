@@ -164,7 +164,7 @@ a.lnk{color:var(--accent);font-weight:700}
 <div class="app" id="app">
   <header class="top">
     <div class="brand">
-      <h1>QG La Nublière <span class="mock">Maquette</span></h1>
+      <h1>QG La Nublière</h1>
       <p>Camping Sandaya La Nublière · Pôle animation</p>
     </div>
     <button class="pill" id="btnTempoo" type="button"><span class="dot" id="tDot"></span><span id="tTxt">Tempoo…</span></button>
@@ -200,8 +200,8 @@ a.lnk{color:var(--accent);font-weight:700}
 <div class="toast" id="toast"></div>
 
 <script>
+
 (function(){
-/* ================= Données ================= */
 const ALL_CONN=['Gmail','Google Calendar','Google Docs','Google Drive','Google Sheets','Google Slides','Canva','DeepL','ElevenLabs','Higgsfield','Spotify','Trello','Unsplash','Speko'];
 // x0,y0,x1,y1 en cases ; wall/floor = couleurs pixel ; css = couleur d'interface
 const ROOMS={
@@ -227,74 +227,67 @@ const SKIN=['#f6cfae','#e5b08a','#c98d63','#8e5a3a','#f8dcc4','#b97a55'];
 const HAIR=['#3b2a20','#1f1a17','#7a4b28','#e0b04a','#b5452c','#8d8a98'];
 const BODY={dir:'#3f5291',anim:'#ef8a4c',plan:'#1aa59e',com:'#4f7fe0',cm:'#e05a98',suivi:'#6aa84f',new:'#8a5cd0'};
 const A={};
-function ag(id,o){A[id]=Object.assign({id,tasks:[],history:[],bubble:'',at:'desk',chat:[],long:false},o);}
+function ag(id,o){A[id]=Object.assign({id,bubble:'',at:'desk',long:false},o);}
 ag('gaston',{name:'Gaston',role:'Directeur Général',pole:'dir',level:'dg',skin:0,hair:5,
   bio:"Ton bras droit. Je reçois ce qui arrive de Tempoo et de toi, je le confie au bon pôle, je relis ce que les responsables m'envoient et je te présente seulement ce qui est prêt. Et je note ta façon de bosser pour te déranger de moins en moins.",
-  manages:["Lire Tempoo et répartir les infos entre les pôles","Répartir tes demandes","Valider ou renvoyer le travail vérifié par les responsables","Te présenter les dossiers prêts pour ton OK","Tenir le carnet de tes préférences","Te proposer des embauches quand tu ajoutes un connecteur"],
-  conn:[],connNote:"Lecture seule de Tempoo. Aucun outil d'action : il n'envoie rien lui-même et ne modifie jamais Tempoo.",
-  tasks:[{t:"Relire le mail de bienvenue aux saisonniers",s:'chez-dg'}],history:[{t:"Programme type d'une semaine en juillet",s:'ton-ok'}],bubble:'répartit les infos de Tempoo'});
+  manages:["Lire Tempoo chaque matin et répartir les infos entre les pôles","Répartir tes demandes","Valider ou renvoyer le travail vérifié par les responsables","Te présenter les dossiers prêts pour ton OK","Tenir le carnet de tes préférences","Te proposer des embauches quand tu ajoutes un connecteur"],
+  conn:[],connNote:"Lecture seule de Tempoo. Aucun outil d'action : il n'envoie rien lui-même et ne modifie jamais Tempoo."});
 ag('lulu',{name:'Lulu',role:'Responsable Animation & Activités',pole:'anim',level:'resp',skin:1,hair:3,long:true,
   bio:"Je chapeaute les activités. Avant que ça parte chez Gaston, je vérifie que c'est faisable, adapté à l'âge, à la météo et au matos qu'on a.",
-  manages:["Vérifier les fiches activités et le programme","Cohérence âges / horaires / lieux / sécurité","Répartir le boulot entre Momo et Jojo"],bubble:'relit les fiches activités'});
+  manages:["Vérifier les fiches activités et le programme","Cohérence âges / horaires / lieux / sécurité","Répartir le boulot entre Momo et Jojo"]});
 ag('momo',{name:'Momo',role:"Créateur d'activités",pole:'anim',level:'agent',skin:3,hair:1,
   bio:"Je ponds des idées d'activités et je les mets en fiches : règles, durée, matos, nombre d'animateurs.",
-  manages:["Fiches activités : Kids, Ados, Famille, D.I.Y, tournois","Plan B jour de pluie","Caser les incontournables dans le programme"],
-  tasks:[{t:"5 activités jour de pluie pour les 6-10 ans",s:'en-cours'}],bubble:'invente un plan B pluie'});
-ag('jojo',{name:'Jojo',role:'Programmateur des soirées',pole:'anim',level:'agent',skin:4,hair:2,at:'pause',
+  manages:["Fiches activités : Kids, Ados, Famille, D.I.Y, tournois","Plan B jour de pluie","Programme de la semaine"]});
+ag('jojo',{name:'Jojo',role:'Programmateur des soirées',pole:'anim',level:'agent',skin:4,hair:2,
   bio:"Big Quiz, Blind Test, Karaoké, Ciné plein air : je construis les soirées et les playlists qui vont avec.",
-  manages:["Programme des soirées","Playlists Spotify par soirée","Déroulé des spectacles"],bubble:'en pause'});
+  manages:["Programme et déroulé des soirées","Questions de quiz et blind tests","Playlists par soirée"]});
 ag('odile',{name:'Odile',role:'Responsable Planning & Équipe',pole:'plan',level:'resp',skin:5,hair:0,long:true,
   bio:"Je vérifie que les plannings tiennent la route : repos respectés, personne en double, toutes les activités couvertes.",
-  manages:["Contrôler plannings et horaires","Respect des repos et du temps de travail","Suivre contrats et recrutements"],bubble:'vérifie les repos'});
+  manages:["Contrôler plannings et horaires","Respect des repos et du temps de travail","Suivre contrats et recrutements"]});
 ag('paco',{name:'Paco',role:'Planificateur',pole:'plan',level:'agent',skin:2,hair:1,
-  bio:"Je fais les plannings types et les horaires de l'équipe, puis je les pousse dans l'agenda.",
-  manages:["Plannings types par poste","Horaires des activités","Synchro avec Google Calendar"],bubble:'remplit le planning du Second'});
-ag('ines',{name:'Inès',role:'Chargée d\'équipe & recrutement',pole:'plan',level:'agent',skin:1,hair:4,long:true,
+  bio:"Je fais les plannings types et les horaires de l'équipe.",
+  manages:["Plannings types par poste","Horaires des activités","Répartition des créneaux"]});
+ag('ines',{name:'Inès',role:"Chargée d'équipe & recrutement",pole:'plan',level:'agent',skin:1,hair:4,long:true,
   bio:"Congés, changements de dispo, feuilles d'heures et recrutement : je garde le fil.",
-  manages:["Changements de disponibilité","Feuilles d'heures","Suivi des candidatures"],bubble:'cherche 2 animateurs Miniclub'});
+  manages:["Changements de disponibilité","Feuilles d'heures","Annonces, tri et suivi des candidatures"]});
 ag('margaux',{name:'Margaux',role:'Responsable Communication',pole:'com',level:'resp',skin:4,hair:4,long:true,
   bio:"Rien ne sort sans que je l'aie relu : orthographe, ton, infos justes, bonne langue.",
   manages:["Relire mails, messages et affiches","Vérifier les traductions","Garder un ton cohérent"]});
 ag('yanis',{name:'Yanis',role:'Rédacteur mails & messages',pole:'com',level:'agent',skin:2,hair:0,
   bio:"J'écris les mails et les messages : aux candidats, à l'équipe, aux vacanciers, à la direction du camping.",
-  manages:["Messages aux candidats","Mails à l'équipe et à la direction","Messages aux vacanciers"],
-  tasks:[{t:"Mail de bienvenue aux saisonniers",s:'en-cours'}]});
+  manages:["Messages aux candidats","Mails à l'équipe et à la direction","Messages aux vacanciers"]});
 ag('lina',{name:'Lina',role:'Affichage & traductions',pole:'com',level:'agent',skin:0,hair:2,long:true,
   bio:"Programme de la semaine, affiches d'accueil, et tout ça en anglais, néerlandais et allemand.",
-  manages:["Programme hebdo affiché","Écran d'accueil sur Google Slides","Traductions EN / NL / DE avec DeepL"],bubble:'traduit le programme en NL'});
+  manages:["Programme hebdo affiché","Écran d'accueil","Traductions EN / NL / DE"]});
 ag('zoe',{name:'Zoé',role:'Responsable Community Manager',pole:'cm',level:'resp',skin:0,hair:3,long:true,
   bio:"Je veille aux réseaux : bonne image du camping, rythme de publication, visuels propres.",
   manages:["Valider visuels, posts et vidéos","Calendrier de publication","Cohérence avec l'image du camping"]});
 ag('kenzo',{name:'Kenzo',role:'Visuels & posts',pole:'cm',level:'agent',skin:3,hair:1,
-  bio:"Je fais les visuels sur Canva et j'écris les légendes des posts.",
-  manages:["Posts Instagram et Facebook","Affiches des soirées sur Canva","Offres d'emploi en visuel"],bubble:'prépare l\'offre Miniclub'});
-ag('maya',{name:'Maya',role:'Vidéos & Reels',pole:'cm',level:'agent',skin:5,hair:4,at:'pause',long:true,
+  bio:"J'imagine les visuels et j'écris les légendes des posts.",
+  manages:["Posts Instagram et Facebook","Brief des affiches Canva","Offres d'emploi en visuel"]});
+ag('maya',{name:'Maya',role:'Vidéos & Reels',pole:'cm',level:'agent',skin:5,hair:4,long:true,
   bio:"Reels, petites vidéos et voix off : je fais bouger le compte.",
-  manages:["Reels et TikTok","Vidéos générées avec Higgsfield","Voix off avec ElevenLabs"],bubble:'en pause'});
-ag('rose',{name:'Rose',role:"Référente d'un animateur",pole:'suivi',level:'ref',skin:1,hair:2,long:true,bubble:'prépare un entretien d\'arrivée'});
-ag('basile',{name:'Basile',role:"Référent d'un animateur",pole:'suivi',level:'ref',skin:4,hair:0,at:'pause',bubble:'en pause'});
-ag('capucine',{name:'Capucine',role:"Référente d'un animateur",pole:'suivi',level:'ref',skin:2,hair:3,long:true});
-ag('elio',{name:'Elio',role:"Référent d'un animateur",pole:'suivi',level:'ref',skin:3,hair:5});
+  manages:["Scripts de Reels et TikTok","Idées de vidéos","Textes de voix off"]});
+ag('rose',{name:'Rose',role:"Référente",pole:'suivi',level:'ref',skin:1,hair:2,long:true});
+ag('basile',{name:'Basile',role:"Référent",pole:'suivi',level:'ref',skin:4,hair:0});
+ag('capucine',{name:'Capucine',role:"Référente",pole:'suivi',level:'ref',skin:2,hair:3,long:true});
+ag('elio',{name:'Elio',role:"Référent",pole:'suivi',level:'ref',skin:3,hair:5});
 const refInfo={rose:{who:"l'animateur·rice n°1",role:''},basile:{who:"l'animateur·rice n°2",role:''},capucine:{who:"l'animateur·rice n°3",role:''},elio:{who:"l'animateur·rice n°4",role:''}};
 function refreshRefs(){ for(const id of POLES.suivi.refs){ const a=A[id], r=refInfo[id];
   a.role=`Référent·e de ${r.who}`; a.bio=`Je m'occupe d'une seule personne de ton équipe, ${r.who}${r.role?' ('+r.role+')':''} : son bien-être, ses objectifs, et le compte rendu de vos entretiens individuels.`;
   a.manages=[`Suivi du bien-être de ${r.who}`,"Préparer et résumer vos entretiens individuels","Suivre ses objectifs et ses points d'amélioration"]; } }
 refreshRefs();
-try{const s=JSON.parse(localStorage.getItem('qg-names')||'{}');for(const k in s)if(A[k])A[k].name=s[k];}catch(e){}
-function saveNames(){try{const o={};for(const k in A)o[k]=A[k].name;localStorage.setItem('qg-names',JSON.stringify(o));}catch(e){}}
+function hireNew(){ if(A.sacha) return;
+  POLES.new={name:'Accueil & rappels',css:'var(--c-new)',mission:"SMS de rappel aux vacanciers inscrits et réponses types au téléphone sur le programme.",conn:['Speko'],resp:'sacha',agents:['nina']};
+  ag('sacha',{name:'Sacha',role:'Responsable Accueil & rappels',pole:'new',level:'resp',skin:2,hair:3,long:true,bio:"Je vérifie chaque SMS et chaque réponse téléphonique type avant qu'ils partent.",manages:["Vérifier les SMS de rappel","Valider les réponses téléphoniques types"]});
+  ag('nina',{name:'Nina',role:'Agent rappels & téléphone',pole:'new',level:'agent',skin:1,hair:0,bio:"Je prépare les SMS de rappel et les réponses au téléphone sur le programme.",manages:["SMS de rappel des activités","Réponses téléphoniques types"]}); }
 
-let VALID=[
- {id:1,t:"Programme type d'une semaine en juillet",pole:'anim',by:'momo',resp:'lulu',type:'Activités',prev:"Lundi : Forum d'accueil + Kool'Disco · Mardi : Olympiades au QG des Kids · Mercredi : Big Quiz devant l'écran géant · Jeudi : Pétanque nocturne…"},
- {id:2,t:"Mail de bienvenue aux saisonniers",pole:'com',by:'yanis',resp:'margaux',type:'Mails',prev:"Salut à toutes et à tous ! Bienvenue dans l'équipe d'anim de Sandaya La Nublière. Rendez-vous le lundi 29 mars à 9h…"},
- {id:3,t:"Planning type du Second d'animation",pole:'plan',by:'paco',resp:'odile',type:'Plannings',prev:"Lundi : Forum d'accueil 17:45-18:30 · Mardi : Tournoi de foot 14:45-17:15 · Mercredi : Big Quiz 20:10-22:10…"},
- {id:4,t:"Post Insta : « On recrute 2 animateurs Miniclub ! »",pole:'cm',by:'kenzo',resp:'zoe',type:'Posts réseaux',prev:"☀️ Tu veux passer ton été au QG des Kids ? Sandaya La Nublière recrute 2 animateurs·rices Miniclub du 28 juin au 29 août 2027…"}
-];
-const CONF={'Activités':55,'Mails':40,'Plannings':70,'Posts réseaux':25,'Entretiens':10};
-let CARNET=[{t:"Tutoiement avec l'équipe d'anim, vouvoiement avec la direction du camping",ex:true},{t:"Pas de messages à l'équipe après 21h",ex:true},{t:"Affiches : couleurs du camping, peu de texte",ex:true}];
-let RECRUT={done:false};
-const DEMANDES=[];
-let TEMPOO=null, TSTATE='loading';
-
+/* ---- État persistant ---- */
+const TYPES=['Activités','Soirées','Plannings','Recrutement','Mails & messages','Réseaux sociaux','Entretiens','Autre'];
+let S={v:1,demandes:[],carnet:[],conf:{},chats:{},names:{},recrut:null};
+let TEMPOO=null, TSTATE='loading', DB=null, UID=null, SAMPLE=null, SAVE='local';
+const ACTIVE=['repartition','en-cours','chez-resp','chez-dg'];
+const DST={'repartition':'Gaston répartit','en-cours':'En cours','chez-resp':'Chez le responsable','chez-dg':'Chez Gaston','ton-ok':'Attend ton OK','valide':'Validé','refuse':'Refusé','a-corriger':'Renvoyé pour correction','erreur':'Bloqué','interrompu':'Interrompu','tempoo':'Reçu de Tempoo','alerte':'À traiter','attente':'En attente'};
 /* ================= Pixel art ================= */
 const T=16, W=29, D=23, OX=D*T+14, OY=58, CW=(W+D)*T+28, CH=(W+D)*8+OY+26;
 let OFX=0, OFY=0;
@@ -424,11 +417,11 @@ function chairBack(c,x,y){ box(c,x-.22,y-.15,.3,.44,.44,.08,'#4b4f63'); box(c,x-
 function island(r,ids,mug,div){ const x=r.x0+1.5, yb=r.y0+1.9, yf=yb+.7;
   const slots=[[x,yb,0],[x+1.4,yb,0],[x,yf,1],[x+1.4,yf,1]];
   slots.forEach(([dx,dy,f],i)=>{ const id=ids[i]; add(dx+.7+dy+.35, c=>iDesk(c,dx,dy,f,mug));
-    if(!f){ const cx=dx+.7, cy=dy-.32; if(id){POS[id]=[cx,cy]; BACKS.delete(id);} add(cx+cy-.05, c=>{ if(id&&A[id]&&A[id].at==='desk') return; chair(c,cx,cy); }); }
+    if(!f){ const cx=dx+.7, cy=dy-.32; if(id){POS[id]=[cx,cy]; BACKS.delete(id);} add(cx+cy-.05, c=>{ if(id&&A[id]&&A[id].at==='desk'&&!MOV[id]) return; chair(c,cx,cy); }); }
     else { const cx=dx+.7, cy=dy+1.05; if(id){POS[id]=[cx,cy]; BACKS.add(id);} add(cx+cy+.3, c=>chairBack(c,cx,cy)); } });
   add(x+1.4+yb+.7+.01, c=>box(c,x,yb+.67,.7,2.8,.06,.32,div,{top:shade(div,1.3)}));
 }
-function seat(id,dx,dy,mug){ add(dx+.75+dy+.4, c=>desk(c,dx,dy,mug)); const cx=dx+.85, cy=dy-.3; POS[id]=[cx,cy]; add(cx+cy-.05, c=>{ if(A[id]&&A[id].at==='desk') return; chair(c,cx,cy); }); }
+function seat(id,dx,dy,mug){ add(dx+.75+dy+.4, c=>desk(c,dx,dy,mug)); const cx=dx+.85, cy=dy-.3; POS[id]=[cx,cy]; add(cx+cy-.05, c=>{ if(A[id]&&A[id].at==='desk'&&!MOV[id]) return; chair(c,cx,cy); }); }
 function buildObjs(){
   OBJ=[]; for(const k in ROOMS) walls(ROOMS[k]);
   // Président
@@ -463,20 +456,24 @@ function buildObjs(){
     island(r,[hired[0]&&hired[0].id,hired[1]&&hired[1].id,null,null],'#8a5cd0',shade(r.wall,1.25));
     add(r.x0+5.6+r.y0+.6, c=>whiteboard(c,r.x0+5.1,r.y0+.5)); add(r.x0+6.6+r.y0+4.4, c=>plant(c,r.x0+6.65,r.y0+4.55)); }
   [[9.2,7.6],[19.0,7.6],[9.2,15.2],[19.0,15.2],[28.3,7.6],[28.3,15.2],[28.3,22.2],[9.2,22.2]].forEach(([x,y])=>add(x+y,c=>plant(c,x,y)));
-  POS.maya=[20.0,2.25]; POS.basile=[24.4,2.0]; POS.jojo=[23.8,3.55];
-  for(const id in A){ if(id==='yanis'||!POS[id]) continue; const a=A[id]; add(POS[id][0]+POS[id][1]+.001, c=>{ const [x,y]=POS[id]; drawChar(c,a,x,y,null,a.at==='desk'&&bobOn&&(Math.floor(tNow/600+a.skin)%2===0),a.at==='desk'&&BACKS.has(id)); }); }
-  add(0, c=>{}); // yanis inséré dynamiquement
+  for(const id in POS) DESK[id]=POS[id];
+  let pi=0; const SPK={};
+  for(const id in A){ if(A[id].at==='pause'){ const sp=PAUSE_SPOTS[pi++%PAUSE_SPOTS.length]; POS[id]=[sp[0],sp[1]]; SPK[id]=sp[2]||(sp[0]+sp[1]+.001); } }
+  for(const id in A){ if(!POS[id]) continue; const a=A[id]; add(SPK[id]||(POS[id][0]+POS[id][1]+.001), c=>{ if(MOV[id]) return; const [x,y]=POS[id]; drawChar(c,a,x,y,null,bobOn&&a.at==='desk'&&(Math.floor(tNow/600+a.skin)%2===0),a.at==='desk'&&BACKS.has(id)); }); }
   OBJ.sort((a,b)=>a.k-b.k);
 }
+const DESK={};
+const PAUSE_SPOTS=[[19.3,2.2,22.0],[20.3,2.2,22.0],[21.3,2.2,22.0],[23.7,2.0,26.7],[24.6,2.0,27.6],[25.5,2.0,28.5],[22.4,4.9,28.1],[25.0,4.25],[19.0,5.0],[20.2,5.4],[22.5,5.9],[23.6,5.7],[24.7,5.9],[25.7,5.4],[19.2,3.3],[22.3,3.0]];
 let tNow=0, bobOn=!matchMedia('(prefers-reduced-motion: reduce)').matches;
-const walk={pos:[22.6,12.45],frame:null,back:true};
+const MOV={};
+const curPos=id=>MOV[id]?MOV[id].pos:POS[id];
 function render(){
   ctx.clearRect(0,0,CW,CH); ctx.drawImage(bg,0,0);
-  const yk=walk.pos[0]+walk.pos[1]; let done=false;
-  for(const o of OBJ){ if(!done&&o.k>yk){ drawChar(ctx,A.yanis,walk.pos[0],walk.pos[1],walk.frame,false,walk.back); done=true; } o.fn(ctx); }
-  if(!done) drawChar(ctx,A.yanis,walk.pos[0],walk.pos[1],walk.frame,false,walk.back);
+  const ms=Object.keys(MOV).map(id=>({id,k:MOV[id].pos[0]+MOV[id].pos[1]+.002})).sort((a,b)=>a.k-b.k); let mi=0;
+  const dm=id=>{ const m=MOV[id]; drawChar(ctx,A[id],m.pos[0],m.pos[1],m.frame,false,m.back); };
+  for(const o of OBJ){ while(mi<ms.length&&ms[mi].k<o.k) dm(ms[mi++].id); o.fn(ctx); }
+  while(mi<ms.length) dm(ms[mi++].id);
 }
-
 /* ================= Vue : zoom, déplacement, toucher ================= */
 const stage=document.getElementById('stage'), world=document.getElementById('world'), ov=document.getElementById('ov');
 const view={s:2,tx:0,ty:0};
@@ -510,7 +507,7 @@ function buildNav(){ const nav=document.getElementById('nav'); nav.innerHTML=`<b
 function navState(){ document.querySelectorAll('#nav [data-go]').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.go===(focused||'all'))+'')); }
 function setHdr(){ const t=document.querySelector('.top'); if(t) document.documentElement.style.setProperty('--hdr',t.getBoundingClientRect().bottom+'px'); }
 function toWorld(e){ const r=stage.getBoundingClientRect(); return [(e.clientX-r.left-view.tx)/view.s,(e.clientY-r.top-view.ty)/view.s]; }
-function pickAgent(px,py,touch){ const m=touch?Math.max(4,14/view.s):0; let best=null,bd=1e9; for(const id in A){ const p=id==='yanis'?walk.pos:POS[id]; if(!p) continue; const s=P(p[0],p[1]);
+function pickAgent(px,py,touch){ const m=touch?Math.max(4,14/view.s):0; let best=null,bd=1e9; for(const id in A){ const p=curPos(id); if(!p) continue; const s=P(p[0],p[1]);
   if(px>=s[0]-7-m&&px<=s[0]+7+m&&py>=s[1]-22-m&&py<=s[1]+2+m){ const d=Math.hypot(px-s[0],py-(s[1]-10)); if(d<bd){bd=d;best=id;} } } return best; }
 function pickRoom(px,py){ const u=(px-OX)/T, v=(py-OY)/(T/2); const x=(u+v)/2, y=(v-u)/2; for(const k in ROOMS){ const r=ROOMS[k]; if(x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1) return k; } return null; }
 function tap(e){ if(panel.classList.contains('open')&&getComputedStyle(panel).position==='fixed'){ close(); return; }
@@ -518,212 +515,339 @@ function tap(e){ if(panel.classList.contains('open')&&getComputedStyle(panel).po
   for(const el of ov.querySelectorAll('[data-room]')){ const r=el.getBoundingClientRect(); if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){ openZone(el.dataset.room); return; } }
   const r=pickRoom(px,py); if(r){ if(focused!==r) focusRoom(r); else openZone(r); } }
 let hoverId=null; function hover(e){ if(e.pointerType!=='mouse') return; const [px,py]=toWorld(e); const id=pickAgent(px,py); stage.style.cursor=id||pickRoom(px,py)?'pointer':''; if(id!==hoverId){ hoverId=id; placeOverlay(); } }
-
 /* ================= Calque d'étiquettes ================= */
 let selected=null, spot=0, spotList=[];
 function scr(x,y,z=0){ const p=P(x,y,z); return [view.tx+p[0]*view.s, view.ty+p[1]*view.s]; }
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function roomCount(k){ if(k==='pres'||k==='dg'||k==='pause'||k==='free'){ if(k==='pause') return Object.values(A).filter(a=>a.at==='pause').length+' en pause'; if(k==='free') return POLES.new?'Accueil & rappels · 2/2':'2 postes libres'; if(k==='dg') return '1/1 au poste'; return 'Fais une demande'; }
-  const p=POLES[k]; const m=p.refs||[p.resp,...p.agents]; const n=m.filter(id=>A[id].at==='desk').length; return `${n}/${m.length} au poste`; }
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const short=(s,n=34)=>{ s=String(s||''); return s.length>n?s.slice(0,n-1)+'…':s; };
+const roomOf=k=>k==='new'?'free':k;
+function membersOf(k){ const p=POLES[k]; return p.refs?p.refs:[p.resp,...p.agents]; }
+function roomCount(k){ if(k==='pause') return Object.values(A).filter(a=>a.at==='pause').length+' en pause'; if(k==='free') return POLES.new?(membersOf('new').filter(id=>A[id].at==='desk').length+'/2 au poste'):'2 postes libres'; if(k==='dg') return '1/1 au poste'; if(k==='pres') return 'Fais une demande';
+  const m=membersOf(k); return `${m.filter(id=>A[id].at==='desk').length}/${m.length} au poste`; }
 function placeOverlay(){
   let h='';
   for(const k in ROOMS){ const r=ROOMS[k]; const [x,y]=scr(r.x0+.2,r.y1+.5); const nm=k==='free'&&POLES.new?'Accueil & rappels':r.name;
     h+=`<button type="button" class="room-lbl${(!focused&&view.s<1.9)?' sm':''}" data-room="${k}" style="left:${x}px;top:${y}px;background:${r.css}"><span class="ic">${r.ic}</span><span><b>${esc(nm)}</b><small>${roomCount(k)}</small></span></button>`; }
-  const far=!focused&&view.s<1.9; const showCard=new Set((far?[selected,hoverId]:[selected,hoverId,'yanis',spotList[spot%Math.max(1,spotList.length)]]).filter(Boolean));
-  for(const id in A){ const p=id==='yanis'?walk.pos:POS[id]; if(!p) continue; const a=A[id]; const [x,y]=scr(p[0],p[1]); const top=y-22*view.s-4;
+  const far=!focused&&view.s<1.9; const moving=Object.keys(MOV);
+  const showCard=new Set((far?[selected,hoverId,...moving]:[selected,hoverId,...moving,spotList[spot%Math.max(1,spotList.length)]]).filter(Boolean));
+  for(const id in A){ const p=curPos(id); if(!p) continue; const a=A[id]; const [x,y]=scr(p[0],p[1]); const top=y-22*view.s-4;
     const col=a.level==='dg'?'var(--c-dir)':(POLES[a.pole]||{}).css||'var(--c-new)';
     if(showCard.has(id)&&a.bubble) h+=`<div class="card" style="left:${x}px;top:${top}px"><div class="nm"><i style="background:${col}"></i>${esc(a.name)}</div><div class="tk">${esc(a.bubble)}</div></div>`;
     else if(!far) h+=`<div class="chip" style="left:${x}px;top:${top}px"><i style="background:${col}"></i>${esc(a.name)}</div>`; }
-  { const [x,y]=scr(14.01,4.85,1.15); h+=`<span class="badge" data-room="valid" style="left:${x}px;top:${y}px">${VALID.length}</span>`; }
+  const nv=toValidate().length; if(nv){ const [x,y]=scr(14.01,4.85,1.15); h+=`<span class="badge" data-room="valid" style="left:${x}px;top:${y}px">${nv}</span>`; }
   ov.innerHTML=h;
-  ov.querySelectorAll('[data-room]').forEach(b=>b.onclick=ev=>{ev.stopPropagation(); openZone(b.dataset.room);});
 }
-function setBubble(id,b){ A[id].bubble=b; placeOverlay(); }
 
-/* ================= Animation de Yanis ================= */
-const ROUTE=[
- {to:[22.6,12.45],wait:5,b:'écrit le mail de bienvenue'},
- {to:[21.5,12.45],b:'apporte son mail à Margaux'},{to:[21.5,10.4]},
- {to:[22.05,10.4],wait:3.4,arr(){ setBubble('margaux','relit le mail de Yanis'); setTimeout(()=>setBubble('margaux','c\'est bon pour moi !'),1700);} },
- {to:[21.5,10.4],b:'file chez Gaston',leave(){ setTimeout(()=>setBubble('margaux',''),1500);} },
- {to:[21.6,13.4]},{to:[21.6,15.2]},{to:[19.0,15.2]},{to:[19.0,7.6]},{to:[10.5,7.6]},{to:[10.5,5.8]},
- {to:[12.5,4.6],wait:3.4,b:'dépose le mail vérifié',arr(){ setBubble('gaston','valide : direction le président'); bump(); }},
- {to:[10.5,5.8],b:'retourne à son bureau',leave(){ setTimeout(()=>setBubble('gaston','répartit les infos de Tempoo'),1800);} },
- {to:[10.5,7.6]},{to:[19.0,7.6]},{to:[19.0,15.2]},{to:[21.6,15.2]},{to:[21.6,13.4]},{to:[21.5,12.45]},{to:[22.6,12.45]}
-];
-let step=0, waitLeft=3, last=0, acc=0;
-A.yanis.bubble=ROUTE[0].b;
+/* ================= Mouvements ================= */
+let last=0, acc=0;
+function moveAlong(id,start,path){ return new Promise(res=>{ const m=MOV[id]||(MOV[id]={pos:[...start],frame:null,back:false}); m.path=path.map(p=>[...p]); m.res=res; }); }
+function walkToResp(id,rid){
+  const st=DESK[id], rp=DESK[rid]; if(!st||!rp||!bobOn) return {back:async()=>{}};
+  let path; if(Math.abs(st[1]-rp[1])<.1) path=[[rp[0]+(st[0]>rp[0]?.62:-.62),rp[1]]];
+  else { const r=ROOMS[roomOf(A[id].pole)]; const ax=r.x0+1.05; path=[[ax,st[1]],[ax,rp[1]],[rp[0]-.62,rp[1]]]; }
+  const go=moveAlong(id,st,path);
+  return {back:async()=>{ await go; await moveAlong(id,null,[...path].reverse().slice(1).concat([st])); delete MOV[id]; render(); placeOverlay(); }};
+}
 function bump(){ const b=document.getElementById('btnValid'); b.classList.remove('pulse'); void b.offsetWidth; b.classList.add('pulse'); }
 function tick(t){
-  const dt=Math.min(.05,(t-(last||t))/1000); last=t; tNow=t;
-  if(bobOn){
-    if(waitLeft>0){ waitLeft-=dt; walk.frame=null; if(waitLeft<=0){ const c=ROUTE[step]; c.leave&&c.leave(); step=(step+1)%ROUTE.length; if(ROUTE[step].b) setBubble('yanis',ROUTE[step].b); } }
-    else { const tg=ROUTE[step].to,[x,y]=walk.pos,dx=tg[0]-x,dy=tg[1]-y,d=Math.hypot(dx,dy),sp=2.3*dt;
-      if(d<=sp){ walk.pos=[tg[0],tg[1]]; walk.back=(step===0); const c=ROUTE[step]; if(c.b) setBubble('yanis',c.b); c.arr&&c.arr(); waitLeft=c.wait||.0001; walk.frame=null; }
-      else { walk.pos=[x+dx/d*sp,y+dy/d*sp]; walk.back=(dx+dy)<-.001; walk.frame=Math.floor(t/160)%2; } }
-  }
-  acc+=dt; if(acc>1/14){ acc=0; render(); if(walk.frame!=null||waitLeft>0) placeYanisLabel(); }
+  const dt=Math.min(.05,(t-(last||t))/1000); last=t; tNow=t; let moving=false;
+  for(const id in MOV){ const m=MOV[id]; if(!m.path||!m.path.length){ m.frame=null; continue; } moving=true;
+    const tg=m.path[0],[x,y]=m.pos,dx=tg[0]-x,dy=tg[1]-y,d=Math.hypot(dx,dy),sp=2.2*dt;
+    if(d<=sp){ m.pos=[tg[0],tg[1]]; m.path.shift(); if(!m.path.length){ m.frame=null; m.back=false; const r=m.res; m.res=null; r&&r(); } }
+    else { m.pos=[x+dx/d*sp,y+dy/d*sp]; m.back=(dx+dy)<-.001; m.frame=Math.floor(t/160)%2; } }
+  acc+=dt; if(acc>1/14){ acc=0; render(); if(moving) placeOverlay(); }
   requestAnimationFrame(tick);
 }
-function placeYanisLabel(){ placeOverlay(); }
 setInterval(()=>{ spot++; placeOverlay(); },4200);
+
+/* ================= État & sauvegarde ================= */
+let lastAtSig='';
+const toValidate=()=>S.demandes.filter(d=>d.status==='ton-ok');
+function refresh(){
+  const act=S.demandes.filter(d=>ACTIVE.includes(d.status));
+  for(const id in A){ const a=A[id]; a.bubble=''; a.at=(a.level==='agent'||a.level==='ref')?(act.some(d=>d.agent===id)?'desk':'pause'):'desk'; }
+  act.forEach(d=>{ const t=short(d.titre||d.t);
+    if(d.status==='repartition') A.gaston.bubble='lit ta demande : '+t;
+    if(d.status==='en-cours'&&A[d.agent]) A[d.agent].bubble='travaille sur : '+t;
+    if(d.status==='chez-resp'){ if(A[d.agent]) A[d.agent].bubble='apporte son travail à '+(A[d.resp]?A[d.resp].name:''); if(A[d.resp]) A[d.resp].bubble='relit : '+t; }
+    if(d.status==='chez-dg') A.gaston.bubble='vérifie : '+t; });
+  const ok=toValidate(); if(!A.gaston.bubble&&ok.length) A.gaston.bubble=`${ok.length} dossier${ok.length>1?'s':''} pour toi`;
+  if(!A.gaston.bubble&&TEMPOO) A.gaston.bubble='a lu Tempoo ce matin';
+  for(const id in A) if(A[id].at==='pause') A[id].bubble='en pause';
+  const sig=Object.keys(A).map(id=>id+A[id].at).join(); if(sig!==lastAtSig){ lastAtSig=sig; buildObjs(); render(); }
+  spotList=Object.keys(A).filter(id=>A[id].bubble&&A[id].at==='desk');
+  document.getElementById('nValid').textContent=ok.length;
+  placeOverlay();
+}
+let saveT; function save(){
+  trim(); try{ localStorage.setItem('qg-state',JSON.stringify(S)); }catch(e){}
+  clearTimeout(saveT); saveT=setTimeout(async()=>{ if(!DB||!UID) return; try{ await DB.collection('data/users/'+UID).doc('qg').set(JSON.parse(JSON.stringify(S))); SAVE='cloud'; }catch(e){ SAVE='err'; } },700);
+}
+function trim(){ S.demandes=S.demandes.slice(0,80); for(const k in S.chats) S.chats[k]=S.chats[k].slice(-30); S.carnet=S.carnet.slice(0,60); }
+function log(d,t){ (d.log=d.log||[]).push({t,at:Date.now()}); }
+function setSt(d,s){ d.status=s; d.updatedAt=Date.now(); save(); refresh(); livePanel(); }
+function fail(d,msg){ d.err=msg; log(d,'Bloqué : '+msg); setSt(d,'erreur'); toast(msg); }
+function errText(e){ const c=e&&e.code; if(c==='not_granted') return "Tu n'as pas autorisé la page à utiliser Claude. Recharge la page et accepte la demande d'autorisation."; if(c==='rate_limited') return "Trop de demandes en même temps : réessaie dans un moment."; return (e&&e.message)||"Claude n'a pas pu terminer ce travail."; }
+
+/* ================= Le circuit réel : Gaston → agent → responsable → Gaston → toi ================= */
+async function getSample(){ if(SAMPLE) return SAMPLE; try{ SAMPLE=window.claude&&window.claude.use?await window.claude.use('sample'):null; }catch(e){ SAMPLE=null; } return SAMPLE; }
+function persona(id){ const a=A[id], p=POLES[a.pole]||{name:'Direction'}; return `Tu es ${a.name}, ${a.role} au QG des agents IA (pôle « ${p.name} »). ${a.bio} Tu gères : ${a.manages.join(', ')}. Ton style : décontracté camping, tutoiement avec le président, efficace et concret.`; }
+function ctxText(k){
+  let s=`Contexte : QG des agents IA du pôle animation du camping Sandaya La Nublière. Saison de mi-mars à début octobre 2027. Le président du QG est le responsable animation. Date du jour : ${new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}.`;
+  if(TEMPOO){ s+=`\nÉquipe (Tempoo) : `+TEMPOO.team.map(m=>`${m.name}, ${m.role}, du ${m.from} au ${m.to}, ${m.h} h`).join(' ; ');
+    if(TEMPOO.openPosts&&TEMPOO.openPosts.length) s+=`\nPostes à pourvoir : `+TEMPOO.openPosts.map(o=>`${o.nb} × ${o.role} du ${o.from} au ${o.to}`).join(' ; ');
+    const d=k&&TEMPOO.dispatch[k]; if(d) s+=`\nInfos Tempoo pour ce pôle :\n`+d.items.map(i=>`- ${i.t}${i.d?' : '+i.d:''}`).join('\n'); }
+  if(S.carnet.length) s+=`\nPréférences du président (carnet de Gaston) :\n`+S.carnet.slice(0,25).map(c=>'- '+c.t).join('\n');
+  return s;
+}
+function createDemande(t,o={}){
+  const d={id:'d'+Date.now().toString(36),t,pole:o.pole||null,agent:o.agent||null,resp:null,status:'repartition',type:'Autre',titre:short(t,50),consigne:t,createdAt:Date.now(),log:[]};
+  if(d.agent){ d.resp=A[d.agent].level==='agent'?(POLES[d.pole].resp||null):null; }
+  log(d,'Demande envoyée par le président'+(o.via?' via '+o.via:'')+'.');
+  S.demandes.unshift(d); save(); refresh(); run(d); return d;
+}
+async function run(d){
+  const sample=await getSample();
+  if(!sample){ fail(d,"Claude n'est pas joignable ici : ouvre le QG dans l'application Claude ou sur claude.ai."); return; }
+  try{
+    if(!d.agent){
+      setSt(d,'repartition');
+      const ks=d.pole?[d.pole]:['anim','plan','com','cm','suivi'].concat(POLES.new?['new']:[]);
+      const choices=ks.map(k=>`${k} = ${POLES[k].name} : ${POLES[k].mission} Membres : `+membersOf(k).map(id=>`${id} (${A[id].role})`).join(', ')).join('\n');
+      const r=await sample.json(`${persona('gaston')}\n\n${ctxText(d.pole)}\n\nLe président demande : « ${d.t} »\n\nChoisis le pôle et la personne la plus adaptée pour faire ce travail (de préférence un agent ; un référent pour le suivi d'un animateur ; un responsable seulement si personne d'autre ne convient).\nPôles :\n${choices}\n\nRéponds uniquement en JSON : {"pole":"identifiant du pôle","agent":"identifiant de la personne","titre":"titre court du travail, 50 caractères maximum","consigne":"consigne claire pour la personne, 2 à 4 phrases","type":"un parmi : ${TYPES.join(' | ')}"}`,{modelTier:'default',cache:false});
+      let pole=r&&POLES[r.pole]&&ks.includes(r.pole)?r.pole:(d.pole||'anim'); let agent=r&&membersOf(pole).includes(r.agent)?r.agent:(membersOf(pole).find(id=>A[id].level!=='resp')||membersOf(pole)[0]);
+      Object.assign(d,{pole,agent,titre:short((r&&r.titre)||d.t,50),consigne:(r&&r.consigne)||d.t,type:r&&TYPES.includes(r.type)?r.type:'Autre'});
+      d.resp=A[agent].level==='agent'?(POLES[pole].resp||null):null;
+      log(d,`${A.gaston.name} confie le travail à ${A[agent].name} (${POLES[pole].name}).`); save();
+    }
+    await work(d);
+  }catch(e){ fail(d,errText(e)); }
+}
+async function work(d){
+  const sample=await getSample(); if(!sample){ fail(d,"Claude n'est pas joignable ici."); return; }
+  try{
+  for(let attempt=0;attempt<2;attempt++){
+    setSt(d,'en-cours');
+    const fb=(d.feedback||[]).map(f=>'- '+f).join('\n');
+    const {text}=await sample(`${persona(d.agent)}\n\n${ctxText(d.pole)}\n\nDemande du président : « ${d.t} »\nConsigne de ${A.gaston.name} : ${d.consigne||d.t}\n${fb?`\nRemarques à prendre en compte :\n${fb}\n`:''}${fb&&d.content?`\nTa version précédente :\n${d.content}\n`:''}\nOutils de ton pôle : ${(POLES[d.pole].conn||[]).join(', ')||'aucun'}. Ici tu n'as aucun outil : prépare un contenu prêt à copier ou à importer.\nProduis directement le livrable final, en français, complet et concret, adapté au camping. Pas de préambule ni de phrase du type « voici ». Mise en forme simple en texte (titres, listes, tableaux en texte si utile).`,{modelTier:'default',cache:false});
+    d.content=String(text||'').trim(); log(d,`${A[d.agent].name} a terminé une version.`); save();
+    if(d.resp){
+      setSt(d,'chez-resp'); const w=walkToResp(d.agent,d.resp);
+      const r=await sample.json(`${persona(d.resp)}\n\n${ctxText(d.pole)}\n\nTu relis le travail de ${A[d.agent].name} avant de l'envoyer à ${A.gaston.name}.\nDemande du président : « ${d.t} »\n\nTravail à relire :\n${d.content}\n\nVérifie la qualité : exactitude, faisabilité au camping, ton, orthographe, complétude. Corrige toi-même ce qui doit l'être.\nRéponds uniquement en JSON : {"ok":true ou false,"remarques":"tes remarques en 1 à 3 phrases","version":"le livrable final complet, corrigé"}`,{modelTier:'default',cache:false});
+      if(r&&r.version) d.content=String(r.version).trim(); d.respNote=(r&&r.remarques)||''; log(d,`${A[d.resp].name} : ${d.respNote||'relu et validé.'}`);
+      await w.back(); save();
+    }
+    setSt(d,'chez-dg');
+    const g=await sample.json(`${persona('gaston')}\n\n${ctxText(d.pole)}\n\nTu valides le travail avant de le présenter au président. Appuie-toi sur ses préférences (carnet ci-dessus) pour lui éviter du travail inutile.\nDemande du président : « ${d.t} »\n\nTravail :\n${d.content}\n\nRéponds uniquement en JSON : {"verdict":"valider" ou "renvoyer","note":"une phrase pour le président, ou la correction demandée si tu renvoies","type":"un parmi : ${TYPES.join(' | ')}"}`,{modelTier:'default',cache:false});
+    d.gNote=(g&&g.note)||''; if(g&&TYPES.includes(g.type)) d.type=g.type;
+    if(g&&g.verdict==='renvoyer'&&attempt===0){ d.feedback=(d.feedback||[]).concat([`${A.gaston.name} : ${d.gNote}`]); log(d,`${A.gaston.name} renvoie le travail : ${d.gNote}`); continue; }
+    log(d,`${A.gaston.name} valide : ${d.gNote||'prêt pour toi.'}`); setSt(d,'ton-ok'); bump();
+    toast(`${A.gaston.name} : « ${short(d.titre||d.t,40)} » attend ton OK.`); return;
+  }
+  }catch(e){ if(MOV[d.agent]){ delete MOV[d.agent]; render(); } fail(d,errText(e)); }
+}
 
 /* ================= Panneau ================= */
 const panel=document.getElementById('panel'),ph=document.getElementById('ph'),pb=document.getElementById('pb'),app=document.getElementById('app');
-function open(head,body){ ph.innerHTML=head+`<button class="close" type="button" aria-label="Fermer la fiche" id="pClose">✕ Fermer</button>`; pb.innerHTML=body; panel.classList.add('open'); app.classList.add('has-panel'); pb.scrollTop=0; const pc=document.getElementById('pClose'); pc.onclick=close; pc.addEventListener('pointerup',e=>{ e.preventDefault(); close(); }); pb.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openAgent(b.dataset.open)); setTimeout(fitIfNeeded,320); }
-function close(){ panel.classList.remove('open'); app.classList.remove('has-panel'); selected=null; placeOverlay(); setTimeout(fitIfNeeded,320); }
+let curView=null;
+function open(head,body,view){ curView=view||null; ph.innerHTML=head+`<button class="close" type="button" aria-label="Fermer la fiche" id="pClose">✕ Fermer</button>`; pb.innerHTML=body; panel.classList.add('open'); app.classList.add('has-panel'); const pc=document.getElementById('pClose'); pc.onclick=close; pc.addEventListener('pointerup',e=>{ e.preventDefault(); close(); });
+  pb.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openAgent(b.dataset.open)); pb.querySelectorAll('[data-dem]').forEach(b=>b.onclick=()=>openDemande(b.dataset.dem)); setTimeout(fitIfNeeded,320); }
+function close(){ panel.classList.remove('open'); app.classList.remove('has-panel'); selected=null; curView=null; placeOverlay(); setTimeout(fitIfNeeded,320); }
+function livePanel(){ if(!curView||!panel.classList.contains('open')) return; const f=document.activeElement; if(f&&(f.tagName==='TEXTAREA'||f.tagName==='INPUT')&&pb.contains(f)) return; const top=pb.scrollTop; curView(); pb.scrollTop=top; }
 let lastW=0; function fitIfNeeded(){ const w=stage.clientWidth; if(lastW&&w!==lastW){ view.tx+=(w-lastW)/2; applyView(); } lastW=w; }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
-const ST={'en-cours':'En cours','chez-resp':'Chez le responsable','chez-dg':'Chez Gaston','ton-ok':'Attend ton OK','valide':'Validé','refuse':'Refusé','attente':'En attente','tempoo':'Reçu de Tempoo','alerte':'À traiter'};
-const taskHTML=t=>`<div class="task"><span>${esc(t.t)}${t.d?`<span class="sub">${esc(t.d)}</span>`:''}</span><span class="st ${t.s}">${ST[t.s]}</span></div>`;
+const stCls=s=>({repartition:'chez-dg','a-corriger':'attente',erreur:'refuse',interrompu:'attente'}[s]||s);
+const taskHTML=t=>`<div class="task"><span>${esc(t.t)}${t.d?`<span class="sub">${esc(t.d)}</span>`:''}</span>${t.s?`<span class="st ${stCls(t.s)}">${DST[t.s]||t.s}</span>`:''}</div>`;
+const demHTML=d=>`<div class="task" role="button" tabindex="0" data-dem="${d.id}" style="cursor:pointer"><span>${esc(d.titre||d.t)}<span class="sub">${d.agent?esc(POLES[d.pole].name)+' · '+esc(A[d.agent].name):'Gaston répartit'} · ${new Date(d.createdAt).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span></span><span class="st ${stCls(d.status)}">${DST[d.status]}</span></div>`;
 const who=id=>`<button type="button" data-open="${id}">${esc(A[id].name)}</button>`;
 function avatar(a){ const c=document.createElement('canvas'); c.width=12;c.height=20; const x=c.getContext('2d'); const {rows,pal}=sprite(a,null); rows.forEach((r,ri)=>r.forEach((ch,k)=>{ if(ch==='.')return; x.fillStyle=pal[ch]; x.fillRect(k,ri,1,1); })); return c.toDataURL(); }
 const avImg=(a,size=44)=>`<img src="${avatar(a)}" alt="" style="image-rendering:pixelated;width:${size*.6}px;height:${size}px">`;
 function connHTML(list){ const on=list.map(c=>`<span class="tg"><i style="background:var(--ok)"></i>${c}</span>`).join(''); const off=ALL_CONN.filter(c=>!list.includes(c)).map(c=>`<span class="tg off">${c}</span>`).join('');
   return `<div class="tagrow">${on||'<span class="tg">Aucun connecteur</span>'}</div><div class="sec" style="padding-top:10px"><h3>Pas accès à</h3><div class="tagrow">${off}</div></div>`; }
 function bossOf(a){ if(a.level==='dg') return null; if(a.level==='resp'||a.level==='ref') return 'gaston'; return (POLES[a.pole]||{}).resp||'gaston'; }
-function tempooFor(id){ if(!TEMPOO) return []; const out=[]; for(const k in TEMPOO.dispatch){ const d=TEMPOO.dispatch[k]; const p=POLES[k]; if(!p) continue; const members=p.refs||[p.resp,...p.agents]; if(d.to===id||(A[id].level==='dg')) continue; if(members.includes(id)&&A[id].level!=='agent') d.items.forEach(it=>out.push(it)); } return out; }
+function copyText(t,btn){ const done=()=>{ btn.textContent='Copié ✓'; setTimeout(()=>btn.textContent='Copier',1600); };
+  try{ navigator.clipboard.writeText(t).then(done,()=>fallback()); }catch(e){ fallback(); }
+  function fallback(){ const el=btn.closest('.box')?.querySelector('.doc'); if(el){ const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r); toast('Texte sélectionné : copie-le avec ton appareil.'); } } }
 
 function openAgent(id){
   selected=id; placeOverlay();
-  const a=A[id], p=POLES[a.pole]||{name:'',css:'var(--c-new)'}; const conn=a.level==='dg'?[]:(a.conn||p.conn||[]); const boss=bossOf(a);
+  const a=A[id], p=POLES[a.pole]||{name:'',css:'var(--c-new)'}; const conn=a.level==='dg'?[]:(p.conn||[]); const boss=bossOf(a);
   const chain=a.level==='dg'?`Rend des comptes à : <b>toi, le président</b>`:boss==='gaston'?`Rend des comptes à : ${who('gaston')} → toi`:`Rend des comptes à : ${who(boss)} → ${who('gaston')} → toi`;
   const lv={dg:'Direction',resp:'Responsable de pôle',agent:'Agent',ref:'Référent·e'}[a.level];
   const head=`<div class="av">${avImg(a)}</div><div class="who"><h2 id="pName">${esc(a.name)}</h2><p class="role">${esc(a.role)}</p><span class="poletag" style="background:${a.level==='dg'?'var(--c-dir)':p.css}">${a.level==='dg'?'Direction générale':esc(p.name)} · ${lv}</span></div>`;
-  // ce que Gaston lui a transmis depuis Tempoo
   let fromT=[]; if(TEMPOO){ for(const k in TEMPOO.dispatch){ const d=TEMPOO.dispatch[k]; if(d.to===id) fromT=fromT.concat(d.items); } }
+  const mine=S.demandes.filter(d=>d.agent===id||d.resp===id||(a.level==='dg'));
+  const cur=mine.filter(d=>ACTIVE.includes(d.status)||d.status==='ton-ok'), hist=mine.filter(d=>!ACTIVE.includes(d.status)&&d.status!=='ton-ok');
+  const chat=S.chats[id]||[];
   let body=`<div class="sec"><h3>Qui je suis</h3><p>${esc(a.bio)}</p></div>
   <div class="sec"><h3>Ce que je gère</h3><ul class="list">${a.manages.map(m=>`<li>${esc(m)}</li>`).join('')}</ul></div>
   <div class="sec"><h3>Hiérarchie</h3><div class="chain">${chain}</div></div>
   <div class="sec"><h3>Mes connecteurs</h3>${connHTML(conn)}${a.connNote?`<div class="note">${esc(a.connNote)}</div>`:''}${a.pole==='suivi'?`<div class="note">Confidentiel : ses notes ne sont visibles que par toi et ${esc(A.gaston.name)}.</div>`:''}</div>`;
   if(a.level==='dg') body+=dgExtras();
   if(fromT.length) body+=`<div class="sec"><h3>Transmis par ${esc(A.gaston.name)} depuis Tempoo</h3>${fromT.map(it=>taskHTML({t:it.t,d:it.d,s:it.alert?'alerte':'tempoo'})).join('')}${fromT.some(i=>i.url)?`<div class="note">Lien Canva : <a class="lnk" href="${esc(fromT.find(i=>i.url).url)}" target="_blank" rel="noopener">ouvrir la création</a></div>`:''}</div>`;
-  body+=`<div class="sec"><h3>En ce moment</h3>${a.at==='pause'?taskHTML({t:'Rien en cours, en salle de pause',s:'attente'}):''}${a.tasks.map(taskHTML).join('')||(a.at==='pause'?'':(a.bubble?taskHTML({t:a.bubble.charAt(0).toUpperCase()+a.bubble.slice(1),s:'en-cours'}):'<p style="color:var(--muted)">Rien en cours.</p>'))}</div>
-  <div class="sec"><h3>Historique</h3>${a.history.map(taskHTML).join('')||'<p style="color:var(--muted)">Pas encore d\'historique.</p>'}</div>
-  <div class="sec"><h3>Lui parler</h3><div class="talk"><div class="msgs">${a.chat.map(m=>`<div class="msg ${m.me?'me':'them'}">${esc(m.t)}</div>`).join('')}</div><textarea id="talkIn" placeholder="Demande quelque chose à ${esc(a.name)}…"></textarea><div class="row"><button class="btn primary" id="talkSend" type="button">Envoyer</button><button class="btn" id="rename" type="button">Renommer</button></div></div></div>`;
-  open(head,body);
-  document.getElementById('talkSend').onclick=()=>{ const v=document.getElementById('talkIn').value.trim(); if(!v) return; a.chat.push({me:true,t:v});
-    const reply=a.level==='dg'?"Bien reçu ! Je confie ça au bon pôle et je reviens vers toi quand c'est vérifié.":a.level==='agent'?`Ça marche, je m'y mets. ${A[boss].name} relira avant que ça parte chez ${A.gaston.name}.`:`Noté ! Je m'en occupe et ${A.gaston.name} validera.`;
-    a.chat.push({me:false,t:reply+' (réponse de maquette)'}); a.tasks.unshift({t:v.length>60?v.slice(0,57)+'…':v,s:'en-cours'});
-    if(a.at==='pause'){ a.at='desk'; delete POS[id]; buildObjs(); } a.bubble='s\'occupe de ta demande'; openAgent(id); };
+  body+=`<div class="sec"><h3>En ce moment</h3>${cur.map(demHTML).join('')||`<p style="color:var(--muted)">${a.at==='pause'?'Rien à faire : en salle de pause.':'Rien en cours.'}</p>`}</div>
+  <div class="sec"><h3>Historique</h3>${hist.slice(0,15).map(demHTML).join('')||'<p style="color:var(--muted)">Pas encore d\'historique.</p>'}</div>
+  <div class="sec"><h3>Lui parler</h3><div class="talk"><div class="msgs" id="msgs">${chat.map(m=>`<div class="msg ${m.me?'me':'them'}" style="white-space:pre-wrap">${esc(m.t)}</div>`).join('')}</div><textarea id="talkIn" placeholder="Pose une question à ${esc(a.name)}…"></textarea><div class="row"><button class="btn primary" id="talkSend" type="button">Envoyer</button>${a.level!=='dg'?`<button class="btn" id="talkTask" type="button">Lui confier comme travail</button>`:''}<button class="btn" id="rename" type="button">Renommer</button></div></div></div>`;
+  open(head,body,()=>openAgent(id));
+  const tIn=document.getElementById('talkIn');
+  document.getElementById('talkSend').onclick=async()=>{ const v=tIn.value.trim(); if(!v) return; const sample=await getSample(); if(!sample){ toast("Claude n'est pas joignable ici : ouvre le QG dans l'application Claude."); return; }
+    const c=S.chats[id]=S.chats[id]||[]; c.push({me:true,t:v}); tIn.value=''; const msgs=document.getElementById('msgs'); msgs.insertAdjacentHTML('beforeend',`<div class="msg me">${esc(v)}</div><div class="msg them" id="thinking">…</div>`);
+    const hist=c.slice(-12).map(m=>(m.me?'Président : ':a.name+' : ')+m.t).join('\n');
+    try{ const {text}=await sample(`${persona(id)}\n\n${ctxText(a.pole==='dir'?null:a.pole)}\n\nConversation avec le président :\n${hist}\n\nRéponds au dernier message du président, en restant dans ton rôle, en 150 mots maximum. Si sa demande est un vrai travail à produire, propose-lui de te le confier avec le bouton « Lui confier comme travail ».`,{modelTier:'default',cache:false,onText:({text})=>{ const th=document.getElementById('thinking'); if(th) th.textContent=text; }});
+      c.push({me:false,t:String(text).trim()}); save(); }
+    catch(e){ c.push({me:false,t:'(Pas de réponse : '+errText(e)+')'}); save(); }
+    if(curView&&selected===id) openAgent(id); };
+  const tt=document.getElementById('talkTask'); if(tt) tt.onclick=()=>{ const v=tIn.value.trim()||((S.chats[id]||[]).filter(m=>m.me).slice(-1)[0]||{}).t; if(!v){ toast('Écris d\'abord ce que tu veux lui confier.'); return; }
+    const d=createDemande(v,{pole:a.pole==='dir'?null:a.pole,agent:a.level==='dg'?null:id,via:'la fiche de '+a.name}); tIn.value=''; toast(`${a.name} s'y met. Tu suis l'avancée dans « Ton bureau ».`); openDemande(d.id); };
   document.getElementById('rename').onclick=()=>{ const h=document.getElementById('pName'); h.innerHTML=`<input id="renIn" value="${esc(a.name)}" style="font:900 22px var(--f-label);width:100%;border:1px solid var(--line);border-radius:10px;padding:4px 8px;background:var(--surface-2)" aria-label="Nouveau nom">`;
-    const i=document.getElementById('renIn'); i.focus(); i.select(); const done=()=>{ const v=i.value.trim(); if(v&&v!==a.name){ a.name=v.slice(0,18); saveNames(); toast(`C'est noté : il s'appelle maintenant ${a.name}.`);} openAgent(id); };
+    const i=document.getElementById('renIn'); i.focus(); i.select(); const done=()=>{ const v=i.value.trim(); if(v&&v!==a.name){ a.name=v.slice(0,18); S.names[id]=a.name; save(); toast(`C'est noté : il s'appelle maintenant ${a.name}.`); placeOverlay(); } openAgent(id); };
     i.addEventListener('keydown',e=>{ if(e.key==='Enter') i.blur(); }); i.addEventListener('blur',done,{once:true}); };
   if(a.level==='dg') wireDG();
 }
 function dgExtras(){
   const al=TEMPOO?TEMPOO.alerts:[];
-  return `<div class="sec"><h3>Tempoo</h3>${tempooLine()}<div class="row" style="margin-top:8px"><button class="btn" type="button" id="goT">Voir ce que j'ai réparti</button><button class="btn" type="button" id="goValid">${VALID.length} dossiers pour toi</button></div></div>
+  return `<div class="sec"><h3>Tempoo</h3>${tempooLine()}<div class="row" style="margin-top:8px"><button class="btn" type="button" id="goT">Voir ce que j'ai réparti</button><button class="btn" type="button" id="goValid">${toValidate().length} dossier(s) pour toi</button></div></div>
   ${al.length?`<div class="sec"><h3>Mes alertes pour toi</h3>${al.map(t=>taskHTML({t,s:'alerte'})).join('')}</div>`:''}
-  <div class="sec"><h3>Carnet de ${esc(A.gaston.name)} : ta façon de bosser</h3><ul class="list carnet" id="carnet">${CARNET.map(c=>`<li class="${c.ex?'':'learned'}">${esc(c.t)}${c.ex?'<span class="ex">exemple</span>':''}</li>`).join('')}</ul><div class="row" style="margin-top:10px"><button class="btn" type="button" id="quiz">Lancer le questionnaire de départ</button></div><div id="quizBox"></div></div>
-  <div class="sec"><h3>Confiance par type de tâche</h3>${Object.entries(CONF).map(([k,v])=>`<div class="gauge"><span>${k}</span><div class="bar"><b style="width:${v}%"></b></div><span class="v">${v}%</span></div>`).join('')}<div class="note">Elle monte quand tu valides, elle baisse quand tu refuses. Au-delà de 80 %, ${esc(A.gaston.name)} te proposera de valider ce type de tâche à ta place. Tu gardes toujours le dernier mot.</div></div>`;
+  <div class="sec"><h3>Carnet de ${esc(A.gaston.name)} : ta façon de bosser</h3>${S.carnet.length?`<ul class="list carnet">${S.carnet.map(c=>`<li class="learned">${esc(c.t)}</li>`).join('')}</ul>`:`<p style="color:var(--muted)">Vide pour l'instant. Réponds au questionnaire, et chaque correction ou refus de ta part s'ajoutera ici.</p>`}
+  <div class="row" style="margin-top:10px"><button class="btn" type="button" id="quiz">Questionnaire de départ</button>${S.carnet.length?'<button class="btn bad" type="button" id="carnetClear">Vider le carnet</button>':''}</div><div id="quizBox"></div></div>
+  <div class="sec"><h3>Confiance par type de tâche</h3>${TYPES.map(k=>{const v=S.conf[k]||0;return `<div class="gauge"><span>${k}</span><div class="bar"><b style="width:${v}%"></b></div><span class="v">${v}%</span></div>`}).join('')}<div class="note">Elle monte de 5 points quand tu valides, baisse quand tu corriges ou refuses. Tu gardes toujours le dernier mot : rien ne part sans ton OK.</div></div>`;
 }
-const QUIZ=[{q:"Avec les vacanciers, on tutoie ou on vouvoie ?",a:["Tutoiement","Vouvoiement","Ça dépend du public"],l:v=>`Vacanciers : ${v.toLowerCase()}`},{q:"Le programme de la semaine, tu le veux prêt pour quand ?",a:["Vendredi","Samedi","Dimanche soir"],l:v=>`Programme de la semaine prêt le ${v.toLowerCase()}`},{q:"Tes animateurs, tu leur écris surtout par…",a:["Mail","SMS / WhatsApp","Tempoo"],l:v=>`Canal préféré avec l'équipe : ${v}`}];
-function wireDG(){ document.getElementById('goValid').onclick=openValid; document.getElementById('goT').onclick=openTempoo;
-  document.getElementById('quiz').onclick=()=>{ let i=0; const box=document.getElementById('quizBox'); const show=()=>{ if(i>=QUIZ.length){ box.innerHTML=`<div class="note">Merci ! ${esc(A.gaston.name)} a noté tes réponses. Le vrai questionnaire comptera une vingtaine de questions.</div>`; return; }
-    const q=QUIZ[i]; box.innerHTML=`<div class="box" style="margin-top:10px"><div class="meta">Question ${i+1} sur ${QUIZ.length} (aperçu)</div><h4>${q.q}</h4><div class="seg" style="margin-top:8px">${q.a.map(x=>`<button type="button" data-a="${esc(x)}">${x}</button>`).join('')}</div></div>`;
-    box.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{ const t=q.l(b.dataset.a); CARNET.unshift({t}); document.getElementById('carnet').insertAdjacentHTML('afterbegin',`<li class="learned">${esc(t)}</li>`); i++; show(); }); }; show(); }; }
+const QUIZ=[
+ {q:"Avec les vacanciers, on tutoie ou on vouvoie ?",a:["Tutoiement","Vouvoiement","Ça dépend du public"],l:v=>`Avec les vacanciers : ${v.toLowerCase()}`},
+ {q:"Et avec ton équipe d'animateurs ?",a:["Tutoiement","Vouvoiement"],l:v=>`Avec l'équipe : ${v.toLowerCase()}`},
+ {q:"Le programme de la semaine doit être prêt pour quand ?",a:["Jeudi","Vendredi","Samedi","Dimanche soir"],l:v=>`Programme de la semaine prêt le ${v.toLowerCase()}`},
+ {q:"Tes animateurs, tu leur écris surtout par…",a:["Mail","SMS / WhatsApp","Tempoo"],l:v=>`Canal préféré avec l'équipe : ${v}`},
+ {q:"Pas de message à l'équipe après…",a:["20 h","21 h","22 h","Pas de limite"],l:v=>v==='Pas de limite'?"Pas d'heure limite pour écrire à l'équipe":`Pas de message à l'équipe après ${v}`},
+ {q:"Langues à prévoir pour les vacanciers étrangers ?",a:["Anglais","Anglais + néerlandais","Anglais + néerlandais + allemand"],l:v=>`Traductions : ${v.toLowerCase()}`},
+ {q:"Tes mails, plutôt…",a:["Courts et directs","Détaillés"],l:v=>`Style des mails : ${v.toLowerCase()}`},
+ {q:"Les emojis dans les posts et affiches ?",a:["Beaucoup","Un peu","Pas du tout"],l:v=>`Emojis : ${v.toLowerCase()}`}
+];
+function wireDG(){
+  document.getElementById('goValid').onclick=openValid; document.getElementById('goT').onclick=openTempoo;
+  const cc=document.getElementById('carnetClear'); if(cc) cc.onclick=()=>{ cc.outerHTML='<button class="btn bad" type="button" id="cc2">Confirmer : vider le carnet</button>'; document.getElementById('cc2').onclick=()=>{ S.carnet=[]; save(); openAgent('gaston'); }; };
+  document.getElementById('quiz').onclick=()=>{ let i=0; const box=document.getElementById('quizBox'); const show=()=>{ if(i>=QUIZ.length){ save(); box.innerHTML=`<div class="note">Merci ! ${esc(A.gaston.name)} a tout noté dans son carnet.</div>`; setTimeout(()=>openAgent('gaston'),1200); return; }
+    const q=QUIZ[i]; box.innerHTML=`<div class="box" style="margin-top:10px"><div class="meta">Question ${i+1} sur ${QUIZ.length}</div><h4>${q.q}</h4><div class="seg" style="margin-top:8px">${q.a.map(x=>`<button type="button" data-a="${esc(x)}">${x}</button>`).join('')}<button type="button" data-skip="1">Passer</button></div></div>`;
+    box.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{ const t=q.l(b.dataset.a); S.carnet=S.carnet.filter(c=>!c.q||c.q!==i); S.carnet.unshift({t,q:i,at:Date.now()}); i++; show(); });
+    box.querySelector('[data-skip]').onclick=()=>{ i++; show(); }; }; show(); };
+}
+function openDemande(idd){
+  const d=S.demandes.find(x=>x.id===idd); if(!d) return;
+  const head=`<div class="av" style="background:${d.pole?POLES[d.pole].css:'var(--c-dir)'};font-size:26px">📁</div><div class="who"><h2>${esc(d.titre||short(d.t,50))}</h2><p class="role">${d.agent?`${esc(POLES[d.pole].name)} · fait par ${esc(A[d.agent].name)}${d.resp?` · relu par ${esc(A[d.resp].name)}`:''}`:'Gaston choisit le bon pôle…'}</p><span class="poletag" style="background:var(--accent)">${DST[d.status]}</span></div>`;
+  let body=`<div class="sec"><h3>Ta demande</h3><p>${esc(d.t)}</p></div>`;
+  if(ACTIVE.includes(d.status)) body+=`<div class="note">Le travail avance tout seul : garde la page ouverte. Tu peux continuer à te balader dans le QG.</div>`;
+  if(d.err&&d.status==='erreur') body+=`<div class="note" style="color:var(--bad)">${esc(d.err)}</div>`;
+  if(d.content) body+=`<div class="sec"><h3>${d.status==='valide'?'Version validée':'Le travail'}</h3><div class="box"><div class="doc" style="white-space:pre-wrap;line-height:1.5;font-size:14.5px">${esc(d.content)}</div><div class="row" style="margin-top:10px"><button class="btn" type="button" id="cpy">Copier</button></div></div></div>`;
+  if(d.respNote||d.gNote) body+=`<div class="sec"><h3>Avis</h3>${d.respNote&&d.resp?taskHTML({t:`${A[d.resp].name} : ${d.respNote}`}):''}${d.gNote?taskHTML({t:`${A.gaston.name} : ${d.gNote}`}):''}</div>`;
+  if(d.status==='ton-ok') body+=`<div class="sec"><h3>Ta décision</h3><div class="row"><button class="btn ok" type="button" data-act="ok">OK président</button><button class="btn" type="button" data-act="fix">À corriger</button><button class="btn bad" type="button" data-act="no">Refuser</button></div><div id="why"></div><div class="note">Pour l'instant, une fois validé, tu copies le contenu et tu l'utilises où tu veux. L'envoi direct par les connecteurs (Gmail, Canva…) viendra dans une prochaine étape, toujours avec ton OK.</div></div>`;
+  if(d.status==='erreur'||d.status==='interrompu') body+=`<div class="sec"><div class="row"><button class="btn primary" type="button" id="retry">Relancer le travail</button><button class="btn bad" type="button" id="drop">Abandonner</button></div></div>`;
+  body+=`<div class="sec"><h3>Suivi</h3>${(d.log||[]).map(l=>`<div class="task"><span>${esc(l.t)}<span class="sub">${new Date(l.at).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span></span></div>`).join('')}</div>`;
+  open(head,body,()=>openDemande(idd));
+  const cp=document.getElementById('cpy'); if(cp) cp.onclick=()=>copyText(d.content,cp);
+  const rt=document.getElementById('retry'); if(rt) rt.onclick=()=>{ d.err=''; log(d,'Relancé par le président.'); d.agent?work(d):run(d); };
+  const dr=document.getElementById('drop'); if(dr) dr.onclick=()=>{ setSt(d,'refuse'); log(d,'Abandonné par le président.'); save(); openDemande(idd); };
+  pb.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>decide(d,b.dataset.act));
+}
+function decide(d,act){
+  if(act==='ok'){ S.conf[d.type]=Math.min(100,(S.conf[d.type]||0)+5); log(d,'Validé par le président.'); setSt(d,'valide'); toast(`Validé. Confiance « ${d.type} » : ${S.conf[d.type]} %.`); openDemande(d.id); return; }
+  const why=document.getElementById('why'); why.innerHTML=`<div class="talk" style="margin-top:10px"><textarea id="whyIn" placeholder="${act==='fix'?'Qu\'est-ce qu\'il faut changer ?':'Pourquoi tu refuses ?'} ${esc(A.gaston.name)} s'en souviendra."></textarea><div class="row"><button class="btn primary" type="button" id="whyGo">Envoyer à ${esc(A.gaston.name)}</button></div></div>`;
+  document.getElementById('whyGo').onclick=()=>{ const r=document.getElementById('whyIn').value.trim(); if(!r){ toast('Dis en quelques mots ce qui ne va pas : Gaston en a besoin pour apprendre.'); return; }
+    S.carnet.unshift({t:`${d.type} : ${r}`,at:Date.now()}); S.conf[d.type]=Math.max(0,(S.conf[d.type]||0)-(act==='no'?10:5));
+    if(act==='no'){ log(d,'Refusé par le président : '+r); setSt(d,'refuse'); toast(`${A.gaston.name} a noté pourquoi dans son carnet.`); openDemande(d.id); }
+    else { d.feedback=(d.feedback||[]).concat(['Président : '+r]); log(d,'À corriger : '+r); save(); toast(`${A.gaston.name} renvoie le travail à ${A[d.agent].name} avec ta remarque.`); work(d); openDemande(d.id); } };
+}
 function openZone(z){ if(z==='pres')return openPres(); if(z==='valid')return openValid(); if(z==='dg')return openAgent('gaston'); if(z==='pause')return openPause(); if(z==='free')return POLES.new?openPole('new'):openRecrut(); openPole(z); }
 function openPole(k){
-  const p=POLES[k], r=ROOMS[k]||ROOMS.free; const members=p.refs?p.refs:[p.resp,...p.agents];
-  const d=TEMPOO&&TEMPOO.dispatch[k];
+  const p=POLES[k], r=ROOMS[roomOf(k)]; const members=membersOf(k); const d=TEMPOO&&TEMPOO.dispatch[k];
+  const dem=S.demandes.filter(x=>x.pole===k).slice(0,10);
   const head=`<div class="av" style="background:${p.css};font-size:28px">${r.ic}</div><div class="who"><h2>${esc(p.name)}</h2><p class="role">${p.refs?'4 référents, un par animateur':'1 responsable · 2 agents'}</p></div>`;
   const body=`<div class="sec"><h3>Mission du pôle</h3><p>${esc(p.mission)}</p></div>
   ${d?`<div class="sec"><h3>Reçu de Tempoo via ${esc(A.gaston.name)} → ${esc(A[d.to].name)}</h3>${d.items.map(it=>taskHTML({t:it.t,d:it.d,s:it.alert?'alerte':'tempoo'})).join('')}</div>`:''}
   <div class="sec"><h3>L'équipe</h3>${members.map(id=>{const a=A[id];return `<div class="task" role="button" tabindex="0" data-open="${id}" style="cursor:pointer"><span style="display:flex;align-items:center;gap:10px">${avImg(a,30)}<span><b>${esc(a.name)}</b><span class="sub">${esc(a.role)}</span></span></span><span class="st ${a.at==='pause'?'attente':'en-cours'}">${a.at==='pause'?'En pause':'Au poste'}</span></div>`}).join('')}</div>
+  <div class="sec"><h3>Travaux du pôle</h3>${dem.map(demHTML).join('')||'<p style="color:var(--muted)">Aucun pour l\'instant.</p>'}</div>
   <div class="sec"><h3>Connecteurs du pôle</h3>${connHTML(p.conn)}<div class="note">Seul ce pôle a accès à ces outils.</div></div>
-  <div class="sec"><h3>Demande directe au pôle</h3><div class="talk"><textarea id="poleIn" placeholder="Ta demande ira à ${esc(A[p.resp||p.refs[0]].name)}. ${esc(A.gaston.name)} sera tenu au courant."></textarea><div class="row"><button class="btn primary" type="button" id="poleSend">Envoyer au pôle</button></div></div></div>`;
-  open(head,body);
-  document.getElementById('poleSend').onclick=()=>{ const v=document.getElementById('poleIn').value.trim(); if(!v) return; const rr=A[p.resp||p.refs[0]]; rr.tasks.unshift({t:v.length>60?v.slice(0,57)+'…':v,s:'en-cours'}); DEMANDES.unshift({t:v,s:'en-cours',to:p.name}); setBubble(rr.id,'traite une demande du président'); toast(`Envoyé à ${rr.name}. ${A.gaston.name} est en copie.`); document.getElementById('poleIn').value=''; };
+  <div class="sec"><h3>Demande directe au pôle</h3><div class="talk"><textarea id="poleIn" placeholder="Ta demande ira directement à ce pôle. ${esc(A.gaston.name)} validera avant de te la présenter."></textarea><div class="row"><button class="btn primary" type="button" id="poleSend">Envoyer au pôle</button></div></div></div>`;
+  open(head,body,()=>openPole(k));
+  document.getElementById('poleSend').onclick=()=>{ const v=document.getElementById('poleIn').value.trim(); if(!v) return; const dd=createDemande(v,{pole:k,via:'le pôle '+p.name}); toast(`Envoyé au pôle ${p.name}.`); openDemande(dd.id); };
 }
-function tempooLine(){ if(TSTATE==='ok') return `<div class="task"><span>Synchronisé le ${frDate(TEMPOO.syncedAt)}<span class="sub">Lecture seule : Tempoo n'est jamais modifié.</span></span><span class="st valide">Connecté</span></div>`;
-  if(TSTATE==='loading') return `<p>Connexion à Tempoo…</p>`; return `<div class="task"><span>Données Tempoo indisponibles ici<span class="sub">Ouvre le QG dans ton compte Claude pour voir tes vraies données. En attendant, la maquette tourne avec des exemples.</span></span><span class="st attente">Hors ligne</span></div>`; }
-function frDate(s){ try{ const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});}catch(e){return s;} }
+function tempooLine(){ if(TSTATE==='ok') return `<div class="task"><span>Synchronisé le ${frDate(TEMPOO.syncedAt)}<span class="sub">Mise à jour chaque matin. Lecture seule : Tempoo n'est jamais modifié.</span></span><span class="st valide">Connecté</span></div>`;
+  if(TSTATE==='loading') return `<p>Connexion à Tempoo…</p>`; return `<div class="task"><span>Données Tempoo indisponibles ici<span class="sub">Ouvre le QG dans ton compte Claude pour voir tes données.</span></span><span class="st attente">Hors ligne</span></div>`; }
+function frDate(s){ try{ const [y,m,d]=String(s).slice(0,10).split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});}catch(e){return s;} }
 function openTempoo(){
   const head=`<div class="av" style="background:var(--accent);color:#fff;font:900 22px var(--f-label)">T</div><div class="who"><h2>Tempoo → QG</h2><p class="role">${esc(A.gaston.name)} lit Tempoo et répartit chaque info au bon pôle</p></div>`;
   let body=`<div class="sec">${tempooLine()}</div>`;
   if(TEMPOO){
-    body+=`<div class="sec"><h3>Ton équipe dans Tempoo</h3>${TEMPOO.team.map(m=>taskHTML({t:`${m.name} · ${m.role}`,d:`Du ${frDate(m.from)} au ${frDate(m.to)} · ${m.h} h`,s:'valide'}).replace('>Validé<','>Sous contrat<')).join('')}${TEMPOO.openPosts.map(o=>taskHTML({t:`${o.nb} × ${o.role}`,d:`Du ${frDate(o.from)} au ${frDate(o.to)} · ${o.h} h`,s:'alerte'}).replace('>À traiter<','>À recruter<')).join('')}</div>`;
-    for(const k in TEMPOO.dispatch){ const d=TEMPOO.dispatch[k], p=POLES[k]; body+=`<div class="sec"><h3 style="color:${p.css}">${esc(p.name)} · confié à ${esc(A[d.to].name)}</h3>${d.items.map(it=>taskHTML({t:it.t,d:it.d,s:it.alert?'alerte':'tempoo'})).join('')}</div>`; }
-    body+=`<div class="sec"><h3>Gardé par ${esc(A.gaston.name)}</h3>${TEMPOO.alerts.map(t=>taskHTML({t,s:'alerte'})).join('')}</div>`;
+    body+=`<div class="sec"><h3>Ton équipe dans Tempoo</h3>${TEMPOO.team.map(m=>`<div class="task"><span>${esc(m.name)} · ${esc(m.role)}<span class="sub">Du ${frDate(m.from)} au ${frDate(m.to)} · ${m.h} h</span></span><span class="st valide">Sous contrat</span></div>`).join('')}${(TEMPOO.openPosts||[]).map(o=>`<div class="task"><span>${o.nb} × ${esc(o.role)}<span class="sub">Du ${frDate(o.from)} au ${frDate(o.to)} · ${o.h} h</span></span><span class="st refuse">À recruter</span></div>`).join('')}</div>`;
+    for(const k in TEMPOO.dispatch){ const d=TEMPOO.dispatch[k], p=POLES[k]; if(!p) continue; body+=`<div class="sec"><h3 style="color:${p.css}">${esc(p.name)} · confié à ${esc(A[d.to].name)}</h3>${d.items.map(it=>taskHTML({t:it.t,d:it.d,s:it.alert?'alerte':'tempoo'})).join('')}</div>`; }
+    body+=`<div class="sec"><h3>Gardé par ${esc(A.gaston.name)}</h3>${(TEMPOO.alerts||[]).map(t=>taskHTML({t,s:'alerte'})).join('')}</div>`;
   }
   body+=`<div class="note">Le QG ne fait que lire Tempoo. Rien n'est jamais écrit dans Tempoo depuis le QG.</div>`;
-  open(head,body);
+  open(head,body,openTempoo);
 }
 function openPres(){
   const head=`<div class="av" style="background:var(--c-pres);font-size:28px">👑</div><div class="who"><h2>Ton bureau</h2><p class="role">Président du QG</p></div>`;
-  const opts=[['dg',`${A.gaston.name} répartit`],...['anim','plan','com','cm','suivi'].map(k=>[k,POLES[k].name])];
+  const opts=[['dg',`${A.gaston.name} répartit`],...['anim','plan','com','cm','suivi'].concat(POLES.new?['new']:[]).map(k=>[k,POLES[k].name])];
+  const act=S.demandes.filter(d=>ACTIVE.includes(d.status)), ok=toValidate(), rest=S.demandes.filter(d=>!ACTIVE.includes(d.status)&&d.status!=='ton-ok');
   const body=`<div class="sec"><h3>Nouvelle demande</h3><div class="talk"><textarea id="presIn" placeholder="Ex. : Remplis le planning type du Second d'animation"></textarea>
   <div><div style="font-size:13px;color:var(--muted);margin-bottom:6px">À qui ?</div><div class="seg" id="presTo">${opts.map((o,i)=>`<button type="button" data-to="${o[0]}" aria-pressed="${i===0}">${esc(o[1])}</button>`).join('')}</div></div>
   <div class="row"><button class="btn primary" type="button" id="presSend">Envoyer la demande</button></div></div>
-  <div class="sec" style="padding-top:12px"><h3>Idées de demandes</h3><div class="seg" id="ideas">${["Remplis le planning type du Second d'animation","Prépare l'offre Miniclub pour Insta","Rédige la convocation visio des candidats","Programme les 9 incontournables sur une semaine type","Prépare l'entretien d'arrivée de Tristan"].map(x=>`<button type="button">${x}</button>`).join('')}</div></div></div>
-  <div class="sec"><h3>Tes demandes récentes</h3>${DEMANDES.map(d=>taskHTML({t:d.t,d:'→ '+d.to,s:d.s})).join('')||'<p style="color:var(--muted)">Aucune demande pour l\'instant.</p>'}</div>
-  <div class="sec"><h3>À traiter</h3><div class="row"><button class="btn" type="button" id="pv">${VALID.length} dossiers à valider</button><button class="btn" type="button" id="pt">Ce que Tempoo a apporté</button><button class="btn" type="button" id="pr">${RECRUT.done?'Recrutement à jour':'1 proposition d\'embauche'}</button></div></div>`;
-  open(head,body); let to='dg';
+  <div class="sec" style="padding-top:12px"><h3>Idées de demandes</h3><div class="seg" id="ideas">${["Remplis le planning type du Second d'animation (35 h)","Rédige l'offre d'emploi Animateur/trice Miniclub pour Insta","Rédige la convocation en visio pour les candidats","Programme les 9 incontournables sur une semaine type de juillet","Prépare la trame de l'entretien d'arrivée de Tristan","Liste le matériel à commander pour les ateliers Kids"].map(x=>`<button type="button">${esc(x)}</button>`).join('')}</div></div></div>
+  ${ok.length?`<div class="sec"><h3>Attend ton OK (${ok.length})</h3>${ok.map(demHTML).join('')}</div>`:''}
+  <div class="sec"><h3>En cours (${act.length})</h3>${act.map(demHTML).join('')||'<p style="color:var(--muted)">Rien en cours : tout le monde est en pause.</p>'}</div>
+  <div class="sec"><h3>Terminé</h3>${rest.slice(0,20).map(demHTML).join('')||'<p style="color:var(--muted)">Rien pour l\'instant.</p>'}</div>
+  <div class="sec"><h3>À savoir</h3><div class="note">Chaque demande fait travailler Claude sur ton compte, et ça avance tant que la page reste ouverte. Tout est enregistré ${SAVE==='cloud'?'dans ton espace privé Claude : tu retrouves tout sur tablette, téléphone ou ordinateur.':'sur cet appareil seulement (pas de connexion à ton espace Claude ici).'}</div></div>`;
+  open(head,body,openPres); let to='dg';
   document.querySelectorAll('#presTo button').forEach(b=>b.onclick=()=>{ to=b.dataset.to; document.querySelectorAll('#presTo button').forEach(x=>x.setAttribute('aria-pressed',x===b)); });
   document.querySelectorAll('#ideas button').forEach(b=>b.onclick=()=>{ document.getElementById('presIn').value=b.textContent; });
-  document.getElementById('pv').onclick=openValid; document.getElementById('pr').onclick=openRecrut; document.getElementById('pt').onclick=openTempoo;
-  document.getElementById('presSend').onclick=()=>{ const v=document.getElementById('presIn').value.trim(); if(!v) return; const dest=to==='dg'?`${A.gaston.name} (répartition)`:POLES[to].name; DEMANDES.unshift({t:v,s:'en-cours',to:dest});
-    if(to==='dg'){ A.gaston.tasks.unshift({t:'Répartir : '+(v.length>50?v.slice(0,47)+'…':v),s:'en-cours'}); setBubble('gaston','a reçu une demande du président'); } else { const r=A[POLES[to].resp||POLES[to].refs[0]]; r.tasks.unshift({t:v,s:'en-cours'}); setBubble(r.id,'traite une demande du président'); }
-    toast(to==='dg'?`${A.gaston.name} a reçu ta demande et va la confier au bon pôle.`:`Envoyé directement au pôle ${POLES[to].name}.`); openPres(); };
+  document.getElementById('presSend').onclick=()=>{ const v=document.getElementById('presIn').value.trim(); if(!v){ toast('Écris d\'abord ta demande.'); return; }
+    const d=createDemande(v,to==='dg'?{via:'Gaston'}:{pole:to,via:'le pôle '+POLES[to].name}); toast(to==='dg'?`${A.gaston.name} a reçu ta demande.`:`Envoyé au pôle ${POLES[to].name}.`); openDemande(d.id); };
 }
 function openValid(){
+  const ok=toValidate();
   const head=`<div class="av" style="background:var(--warn);font-size:26px">📁</div><div class="who"><h2>À valider</h2><p class="role">Vérifié par le responsable, validé par ${esc(A.gaston.name)}. Rien ne part sans ton OK.</p></div>`;
-  const body=VALID.length?VALID.map(v=>`<div class="box" data-v="${v.id}"><h4>${esc(v.t)}</h4><div class="meta"><b style="color:${POLES[v.pole].css}">${esc(POLES[v.pole].name)}</b> · fait par ${esc(A[v.by].name)} · vérifié par ${esc(A[v.resp].name)} ✓ · validé par ${esc(A.gaston.name)} ✓</div><blockquote>${esc(v.prev)}</blockquote><div class="row"><button class="btn ok" type="button" data-act="ok">OK président</button><button class="btn" type="button" data-act="fix">À corriger</button><button class="btn bad" type="button" data-act="no">Refuser</button></div><div class="why"></div></div>`).join('')+`<div class="note" style="margin-top:14px">Contenus d'exemple de la maquette.</div>`:`<p>Tout est traité.</p>`;
-  open(head,`<div class="sec" style="padding-top:12px">${body}</div>`);
-  pb.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>{ const card=b.closest('.box'), v=VALID.find(x=>x.id==card.dataset.v), act=b.dataset.act;
-    if(act==='ok'){ CONF[v.type]=Math.min(100,CONF[v.type]+5); resolve(v,'valide'); toast(`Validé. Confiance ${v.type} : ${CONF[v.type]} %.`); return; }
-    const why=card.querySelector('.why'); why.innerHTML=`<div class="talk" style="margin-top:10px"><textarea placeholder="${act==='fix'?'Qu\'est-ce qu\'il faut changer ?':'Pourquoi tu refuses ?'} ${esc(A.gaston.name)} s'en souviendra."></textarea><div class="row"><button class="btn primary" type="button">Envoyer à ${esc(A.gaston.name)}</button></div></div>`;
-    why.querySelector('button').onclick=()=>{ const r=why.querySelector('textarea').value.trim()||'(sans précision)'; CARNET.unshift({t:`${v.type} : ${r}`}); CONF[v.type]=Math.max(0,CONF[v.type]-(act==='no'?10:5)); resolve(v,act==='no'?'refuse':'en-cours'); toast(`${A.gaston.name} a noté ta remarque et renvoie le dossier à ${A[v.resp].name}.`); }; });
+  open(head,`<div class="sec">${ok.map(demHTML).join('')||`<p>Rien à valider pour l'instant. Fais une demande depuis <b>Ton bureau</b>.</p>`}</div>`,openValid);
 }
-function resolve(v,s){ VALID=VALID.filter(x=>x!==v); A[v.by].history.unshift({t:v.t,s}); document.getElementById('nValid').textContent=VALID.length; placeOverlay(); openValid(); }
 function openPause(){ const ids=Object.keys(A).filter(id=>A[id].at==='pause');
   open(`<div class="av" style="background:var(--c-pause);font-size:28px">☕</div><div class="who"><h2>Salle de pause</h2><p class="role">Quand quelqu'un n'a rien à faire, il vient ici.</p></div>`,
-  `<div class="sec"><h3>En pause en ce moment</h3>${ids.map(id=>{const a=A[id];return `<div class="task" role="button" tabindex="0" data-open="${id}" style="cursor:pointer"><span style="display:flex;align-items:center;gap:10px">${avImg(a,30)}<span><b>${esc(a.name)}</b><span class="sub">${esc(a.role)}</span></span></span><span class="st attente">Dispo</span></div>`}).join('')||'<p>Personne : tout le monde bosse !</p>'}</div><div class="note">Dès qu'un agent reçoit une demande, il retourne à son bureau.</div>`); }
+  `<div class="sec"><h3>En pause (${ids.length})</h3>${ids.map(id=>{const a=A[id];return `<div class="task" role="button" tabindex="0" data-open="${id}" style="cursor:pointer"><span style="display:flex;align-items:center;gap:10px">${avImg(a,30)}<span><b>${esc(a.name)}</b><span class="sub">${esc(a.role)}</span></span></span><span class="st attente">Dispo</span></div>`}).join('')||'<p>Personne : tout le monde bosse !</p>'}</div><div class="note">Dès qu'un agent reçoit un travail, il retourne à son bureau.</div>`,openPause); }
 function openRecrut(){
   const head=`<div class="av" style="background:var(--c-new);font-size:26px">➕</div><div class="who"><h2>Recrutement</h2><p class="role">Propositions de ${esc(A.gaston.name)} quand tu ajoutes un connecteur</p></div>`;
-  const body=RECRUT.done?`<div class="sec"><p>${esc(RECRUT.done)}</p></div>`:`<div class="sec"><div class="box"><div class="meta">Nouveau connecteur détecté</div><h4>Speko : appels et SMS automatiques</h4><blockquote>« Président, avec Speko on pourrait envoyer des SMS de rappel aux vacanciers inscrits aux activités, et répondre au téléphone sur le programme. Je te propose deux options. » ${esc(A.gaston.name)}</blockquote>
-  <div class="opt"><button class="btn" type="button" id="rA"><b>A. Embaucher</b>&nbsp;un nouveau pôle « Accueil & rappels » : Sacha (responsable) + Nina (agent), dans les 2 postes libres.</button><button class="btn" type="button" id="rB"><b>B. Affecter</b>&nbsp;Speko au pôle Communication : ${esc(A.yanis.name)} envoie les SMS, ${esc(A.margaux.name)} vérifie.</button></div></div>
+  const done=S.recrut==='A'?'Sacha et Nina ont rejoint le QG (pôle Accueil & rappels). Seul ce pôle a accès à Speko.':S.recrut==='B'?`Speko est affecté au pôle Communication : ${A.yanis.name} s'en sert, ${A.margaux.name} vérifie.`:'';
+  const body=done?`<div class="sec"><p>${esc(done)}</p></div>`:`<div class="sec"><div class="box"><div class="meta">Connecteur non affecté</div><h4>Speko : appels et SMS automatiques</h4><blockquote>« Président, avec Speko on pourrait envoyer des SMS de rappel aux vacanciers inscrits aux activités, et répondre au téléphone sur le programme. Je te propose deux options. » ${esc(A.gaston.name)}</blockquote>
+  <div class="opt"><button class="btn" type="button" id="rA"><b>A. Embaucher</b>&nbsp;un nouveau pôle « Accueil & rappels » : Sacha (responsable) + Nina (agent), dans les 2 postes libres.</button><button class="btn" type="button" id="rB"><b>B. Affecter</b>&nbsp;Speko au pôle Communication : ${esc(A.yanis.name)} prépare les SMS, ${esc(A.margaux.name)} vérifie.</button></div></div>
   <div class="note">${esc(A.gaston.name)} recommande l'option B tant que le volume reste faible.</div></div>`;
-  open(head,body); if(RECRUT.done) return;
-  document.getElementById('rA').onclick=()=>{ POLES.new={name:'Accueil & rappels',css:'var(--c-new)',mission:"SMS de rappel aux vacanciers inscrits et réponses au téléphone sur le programme.",conn:['Speko'],resp:'sacha',agents:['nina']};
-    ag('sacha',{name:'Sacha',role:'Responsable Accueil & rappels',pole:'new',level:'resp',skin:2,hair:3,long:true,bio:"Fraîchement embauchée ! Je vérifie chaque SMS et chaque réponse téléphonique.",manages:["Vérifier les SMS de rappel","Valider les réponses téléphoniques types"],bubble:'découvre son bureau'});
-    ag('nina',{name:'Nina',role:'Agent rappels & téléphone',pole:'new',level:'agent',skin:1,hair:0,bio:"J'envoie les SMS de rappel et je réponds au téléphone sur le programme.",manages:["SMS de rappel des activités","Réponses téléphoniques"],bubble:'premier jour !'});
-    RECRUT.done='Sacha et Nina ont rejoint le QG (pôle Accueil & rappels). Seul ce pôle a accès à Speko.'; document.getElementById('nRecrut').hidden=true; buildObjs(); buildNav(); placeOverlay(); toast('Bienvenue à Sacha et Nina !'); openRecrut(); };
-  document.getElementById('rB').onclick=()=>{ POLES.com.conn.push('Speko'); A.yanis.manages.push('SMS de rappel avec Speko'); RECRUT.done=`Speko est affecté au pôle Communication : ${A.yanis.name} s'en sert, ${A.margaux.name} vérifie.`; document.getElementById('nRecrut').hidden=true; toast('Speko affecté au pôle Communication.'); openRecrut(); };
+  open(head,body,openRecrut); if(done) return;
+  document.getElementById('rA').onclick=()=>{ S.recrut='A'; hireNew(); save(); document.getElementById('nRecrut').hidden=true; lastAtSig=''; buildNav(); refresh(); toast('Bienvenue à Sacha et Nina !'); openRecrut(); };
+  document.getElementById('rB').onclick=()=>{ S.recrut='B'; if(!POLES.com.conn.includes('Speko')) POLES.com.conn.push('Speko'); save(); document.getElementById('nRecrut').hidden=true; toast('Speko affecté au pôle Communication.'); openRecrut(); };
 }
 document.getElementById('btnPres').onclick=openPres; document.getElementById('btnValid').onclick=openValid; document.getElementById('btnRecrut').onclick=openRecrut; document.getElementById('btnTempoo').onclick=openTempoo;
-let tt; function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),3200); }
+let tt; function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),3600); }
 
-/* ================= Lecture des données Tempoo (transmises par Gaston) ================= */
+/* ================= Tempoo et chargement ================= */
 function setTempoo(data,state){
   TEMPOO=data; TSTATE=state;
   document.getElementById('tDot').classList.toggle('on',state==='ok');
   document.getElementById('tTxt').textContent=state==='ok'?`Tempoo · ${frDate(data.syncedAt).replace(/ \d{4}$/,'')}`:state==='loading'?'Tempoo…':'Tempoo hors ligne';
-  if(data){
-    (data.referents||[]).forEach(r=>{ if(refInfo[r.ref]) refInfo[r.ref]={who:r.who,role:r.role}; }); refreshRefs();
-    const tr=(data.referents||[]).find(r=>r.ref==='rose'); if(tr) A.rose.bubble=`prépare l'arrivée de ${tr.who.split(' ')[0]}`;
-    A.gaston.bubble=`a réparti ${Object.values(data.dispatch).reduce((n,d)=>n+d.items.length,0)} infos de Tempoo`;
-  }
-  spotList=Object.keys(A).filter(id=>id!=='yanis'&&A[id].bubble&&A[id].at==='desk');
-  placeOverlay();
+  if(data){ (data.referents||[]).forEach(r=>{ if(refInfo[r.ref]) refInfo[r.ref]={who:r.who,role:r.role}; }); refreshRefs(); }
 }
-async function loadTempoo(){
-  try{
-    const c=window.claude; if(!c||!c.use){ setTempoo(null,'off'); return; }
-    const [db,user]=await Promise.all([c.use('db'),c.use('user')]);
-    if(!db||!user){ setTempoo(null,'off'); return; }
-    const uid=await user.id(); if(!uid){ setTempoo(null,'off'); return; }
-    const snap=await db.collection('data/users/'+uid).doc('tempoo').get();
-    if(snap.exists){ setTempoo(JSON.parse(JSON.stringify(snap.data())),'ok'); } else setTempoo(null,'off');
-  }catch(e){ setTempoo(null,'off'); }
+async function boot(){
+  try{ const ls=localStorage.getItem('qg-state'); if(ls) S=Object.assign(S,JSON.parse(ls)); }catch(e){}
+  try{ const c=window.claude; if(c&&c.use){ const [db,user]=await Promise.all([c.use('db'),c.use('user')]);
+    if(db&&user){ const uid=await user.id(); if(uid){ DB=db; UID=uid;
+      const [q,t]=await Promise.all([db.collection('data/users/'+uid).doc('qg').get(),db.collection('data/users/'+uid).doc('tempoo').get()]);
+      if(q.exists) S=Object.assign({v:1,demandes:[],carnet:[],conf:{},chats:{},names:{},recrut:null},JSON.parse(JSON.stringify(q.data())));
+      SAVE='cloud'; if(t.exists) setTempoo(JSON.parse(JSON.stringify(t.data())),'ok'); } } } }catch(e){}
+  if(TSTATE==='loading') setTempoo(null,'off');
+  for(const k in S.names) if(A[k]) A[k].name=S.names[k];
+  if(S.recrut==='A'){ hireNew(); buildNav(); } if(S.recrut==='B'&&!POLES.com.conn.includes('Speko')) POLES.com.conn.push('Speko');
+  document.getElementById('nRecrut').hidden=!!S.recrut;
+  let stuck=false; S.demandes.forEach(d=>{ if(ACTIVE.includes(d.status)){ d.status='interrompu'; log(d,'Interrompu : la page a été fermée pendant le travail.'); stuck=true; } }); if(stuck) save();
+  lastAtSig=''; refresh();
 }
 
 /* ================= Démarrage ================= */
-setHdr(); buildBG(); buildObjs(); render(); fit(); buildNav(); lastW=stage.clientWidth; setTempoo(null,'loading');
-spotList=Object.keys(A).filter(id=>id!=='yanis'&&A[id].bubble&&A[id].at==='desk');
+setHdr(); buildBG(); buildObjs(); render(); fit(); buildNav(); lastW=stage.clientWidth; setTempoo(null,'loading'); refresh();
 requestAnimationFrame(tick);
-setTimeout(loadTempoo,0);
+setTimeout(boot,0);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(placeOverlay);
 })();
 </script>
